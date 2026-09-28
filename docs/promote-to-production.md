@@ -105,6 +105,7 @@ git checkout main
 git pull
 source .env
 cd live/prod/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```

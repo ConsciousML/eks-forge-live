@@ -6,6 +6,7 @@ From the root of your live fork, run:
 ```bash
 source .env
 cd live/bootstrap/tailscale
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```

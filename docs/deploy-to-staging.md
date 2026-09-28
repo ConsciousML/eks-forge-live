@@ -9,6 +9,7 @@ From the root of your live fork, run the following commands to deploy the `stagi
 ```bash
 source .env
 cd live/staging/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```

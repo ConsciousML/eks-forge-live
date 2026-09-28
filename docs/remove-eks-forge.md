@@ -7,6 +7,7 @@ Then, run the following from the root of your live fork:
 ```bash
 source .env
 cd live/staging/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
@@ -16,6 +17,7 @@ From the root of your live fork, run:
 ```bash
 source .env
 cd live/prod/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```

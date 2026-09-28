@@ -35,6 +35,7 @@ Re-apply the Tailscale bootstrap to register the new CIDR in `autoApprovers`. Se
 ```bash
 source .env
 cd live/bootstrap/tailscale
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```
@@ -96,6 +97,7 @@ The new environment's node groups add to the account's total vCPU usage. Check w
 ```bash
 source .env
 cd live/pre-staging/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```

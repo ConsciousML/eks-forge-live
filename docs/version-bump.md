@@ -175,6 +175,7 @@ From the root of your live fork, check out the commit on `main` just before your
 ```bash
 source .env
 cd live/prod/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 cd .terragrunt-stack/<path>
 terragrunt destroy
