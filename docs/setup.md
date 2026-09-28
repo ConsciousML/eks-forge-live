@@ -32,9 +32,11 @@ git push origin --tags
 ```
 
 ## Install the CLI Tools
-Stay at the root of your live repository.
-
-Live uses [mise-en-place](https://mise.jdx.dev/) like the catalog, with a slightly different tool set pinned in [`mise.toml`](../mise.toml) and [`mise.local.toml`](../mise.local.toml). Follow the [CLI tools installation steps](/docs/quickstart/installation/#install-the-cli-tools) again, this time from your live fork.
+From the root of your live fork, install the tools pinned in [`mise.toml`](../mise.toml) and [`mise.local.toml`](../mise.local.toml):
+```bash
+mise trust
+mise install
+```
 
 ## Live Configuration
 Live reads `.hcl` configuration files under [`live/`](../live/), like the catalog's `pipelines/`. They point to the catalog's [units](/docs/iac/#units), so `staging` and `prod` use the same components you deployed in [`dev`](/docs/iac/#dev).
