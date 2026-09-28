@@ -75,7 +75,7 @@ Open a pull request with the label that fits your change, so CI can pass its `ch
 gh pr create --title "<message>" --body "<description>" --label run-terratest # or skip-terratest
 ```
 
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). When every job is green, merge:
+Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
 ```bash
 gh pr merge --merge
 ```
