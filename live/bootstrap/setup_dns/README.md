@@ -60,4 +60,4 @@ dig NS <environment>.yourdomain.com
 
 Delegation is working when 4 AWS nameservers appear in the `ANSWER SECTION`.
 
-For more information, read the [Setup DNS quickstart](/docs/quickstart/bootstrap/setup_dns/).
+For more information, read [DNS Bootstrap](/docs/quickstart/bootstrap/setup_dns/).

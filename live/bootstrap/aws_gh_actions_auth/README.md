@@ -11,4 +11,4 @@ terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```
 
-For more information, read the [AWS GitHub Actions Authentication quickstart](/docs/quickstart/bootstrap/aws_gh_actions_auth/).
+For more information, read [AWS GitHub Actions Authentication Bootstrap](/docs/quickstart/bootstrap/aws_gh_actions_auth/).

@@ -4,13 +4,13 @@
 In this tutorial, you'll fork the [live repository](https://github.com/ConsciousML/terragrunt-template-live-eks), install its CLI tools, and point it at your catalog fork.
 
 ## Prerequisites
-Complete the [quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
+Complete the [Quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
 
 ## Fork the Live Repository
-The live repository deploys the [catalog stacks](/docs/architecture/) in the `staging` and `prod` environments.
+The live repository deploys the stacks of the [catalog](/docs/architecture/) in the `staging` and `prod` environments.
 Like the catalog, it's meant to be forked and extended.
 
-Follow the same steps as when you [forked the catalog](/docs/quickstart/installation/#fork-the-eks-forge-catalog). First, [create an empty repository](https://github.com/new) on GitHub, private or public. Leave the README, `.gitignore`, and license options unset.
+Follow the same steps as in [Fork the EKS Forge Catalog](/docs/quickstart/installation/#fork-the-eks-forge-catalog). First, create an empty repository from [GitHub's new repository page](https://github.com/new), private or public. Leave the README, `.gitignore`, and license options unset.
 
 :::warning
 Create it under the same GitHub owner (user or organization) as your catalog fork. The [bootstrap pipelines](#bootstrap) write GitHub secrets and deploy keys under the catalog fork's owner.
@@ -58,7 +58,7 @@ Each [environment](/docs/iac/#environments) sets its AWS region in its own `regi
 - [`live/prod/region.hcl`](../live/prod/region.hcl)
 - [`live/bootstrap/region.hcl`](../live/bootstrap/region.hcl)
 
-Like when you [configured the catalog](/docs/quickstart/configuration/#catalog-configuration), set `region` and `azs` in the `staging` and `prod` files:
+Like in [Catalog Configuration](/docs/quickstart/configuration/#catalog-configuration), set `region` and `azs` in the `staging` and `prod` files:
 ```hcl
 locals {
   region = "us-east-1"

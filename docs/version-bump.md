@@ -2,7 +2,7 @@
 
 This guide shows you how to point [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) at a new catalog tag, and align your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last bump. It assumes you've already pushed the tag from your catalog fork. If not, see [Tag a Catalog Release](/docs/iac/add-a-unit/#tag-a-catalog-release).
 
-To change `staging` or `prod` without a new tag, see [How to Edit the Live Configuration](/docs/iac/edit-live-configuration/) instead.
+To change `staging` or `prod` without a new tag, see [Edit the Live Configuration](/docs/iac/edit-live-configuration/) instead.
 
 First, create a branch in your live fork:
 ```bash
@@ -47,7 +47,7 @@ mise install
 
 Skip tools that only exist in the catalog's `mise.toml`, such as `tflint` and `trivy`. They serve catalog development, not live.
 
-If the catalog added a variable to `.env.example`, check what uses it in the [environment variables reference](/docs/reference/environment_variable/). Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
+If the catalog added a variable to `.env.example`, check what uses it in the [Environment Variables](/docs/reference/environment_variable/) reference. Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
 ```bash
 # See https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/environment-variables.md#slack_bot_token
 export SLACK_BOT_TOKEN=
@@ -103,7 +103,7 @@ locals {
 }
 ```
 
-If the diff touches a shared `.hcl` file under `pipelines/`, port the change to its live counterpart. The [HCL configuration reference](/docs/reference/hcl_configuration/#layout) maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
+If the diff touches a shared `.hcl` file under `pipelines/`, port the change to its live counterpart. The [HCL Configuration](/docs/reference/hcl_configuration/#layout) reference maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
 
 Then apply the diff of [`pipelines/dev/eks/stack/terragrunt.stack.hcl`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/dev/eks/stack/terragrunt.stack.hcl) to both stack files, following the sections below for each added, removed, or changed unit.
 
@@ -187,4 +187,4 @@ git checkout main
 ```
 
 ## What's Next
-See how to change the applications of your cluster in the [applications tutorial](/docs/applications/get-started/).
+Next, see [Deploy Your Applications](/docs/applications/get-started/) to change the applications of your cluster.

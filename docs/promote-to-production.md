@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 # Promote to Production
 
-Now that you've [tested `staging` by hand](/docs/deployment/deploy-to-staging/#test-the-stack), you're ready to promote a new catalog version to `prod` through a pull request. You'll tag your catalog fork, bump `version_catalog` in a pull request, watch [CI](/docs/ci-cd/) test it on `staging`, and merge it so CD deploys `prod`. Finally, you'll destroy `prod`.
+Now that you've completed [Deploy to Staging](/docs/deployment/deploy-to-staging/), you're ready to promote a new catalog version to `prod` through a pull request. You'll tag your catalog fork, bump `version_catalog` in a pull request, watch [CI](/docs/ci-cd/) test it on `staging`, and merge it so CD deploys `prod`. Finally, you'll destroy `prod`.
 
 ## Tag the Catalog
 From the root of your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog), tag `main` and push the tag:
@@ -72,7 +72,7 @@ gh pr merge --merge --subject "bump(catalog): to v0.1.8-demo"
 Merging to `main` triggers CD. In the **Actions** tab, you should see a `CD` run applying the `prod` stack. The deployment should take around 30 minutes.
 
 ## Check the Production Cluster
-When CD is done, connect `kubectl` to your `prod` EKS cluster (replace `<region-code>` with the region you set in [`live/prod/region.hcl`](/docs/deployment/live-repository-setup/#live-configuration)):
+When CD is done, connect `kubectl` to your `prod` EKS cluster (replace `<region-code>` with the region you set in [`live/prod/region.hcl`](../live/prod/region.hcl)):
 ```bash
 aws eks update-kubeconfig --region <region-code> --name prod-cluster
 ```
@@ -113,11 +113,11 @@ terragrunt run --all destroy --non-interactive --no-stack-generate
 Keep the `v0.1.8-demo` tag in your catalog fork: `main` now pins it, and CI and CD need it on your next pull request.
 
 ## What's Next
-Learn [how to add, edit, or remove a unit in your stack](/docs/iac/add-a-unit/), then promote it the same way.
+Next, see [Add a Unit](/docs/iac/add-a-unit/) to add a unit to your stack, then promote it the same way.
 
 ## Remove EKS Forge
 :::warning
 Your live fork's CI and CD rely on the bootstrap resources. Don't remove them if you plan to keep deploying `staging` and `prod`.
 :::
 
-Only if you want to remove EKS Forge from your AWS account entirely, follow [How to Remove EKS Forge](/docs/iac/remove-eks-forge/).
+Only if you want to remove EKS Forge from your AWS account entirely, follow [Remove EKS Forge](/docs/iac/remove-eks-forge/).
