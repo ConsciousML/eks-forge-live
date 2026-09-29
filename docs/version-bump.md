@@ -93,6 +93,10 @@ If the plan shows changes, apply them:
 terragrunt run --all apply --non-interactive
 ```
 
+## Update the Shared Configuration
+
+If the diff touches a shared `.hcl` file under `pipelines/`, such as `dns.hcl` or `domains.hcl`, port the change to its live counterpart. The [HCL Configuration](/docs/reference/hcl_configuration/#layout) reference maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
+
 ## Update the EKS Stacks
 
 Set `version_catalog` to the new tag at the top of both [`live/staging/eks/stack/terragrunt.stack.hcl`](../live/staging/eks/stack/terragrunt.stack.hcl) and [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl), replacing `<new-tag>`:
@@ -102,8 +106,6 @@ locals {
   ...
 }
 ```
-
-If the diff touches a shared `.hcl` file under `pipelines/`, port the change to its live counterpart. The [HCL Configuration](/docs/reference/hcl_configuration/#layout) reference maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
 
 Then apply the diff of [`pipelines/dev/eks/stack/terragrunt.stack.hcl`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/dev/eks/stack/terragrunt.stack.hcl) to both stack files, following the sections below for each added, removed, or changed unit.
 
