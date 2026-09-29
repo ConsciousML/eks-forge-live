@@ -185,3 +185,6 @@ Then return to `main`:
 ```bash
 git checkout main
 ```
+
+## What's Next
+See how to change the applications of your cluster in the [applications tutorial](/docs/applications/get-started/).
