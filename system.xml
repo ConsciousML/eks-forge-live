@@ -51,7 +51,7 @@
 
     <documentation_map>
         - `README.md`: repo overview, prerequisites, deploying a staging EKS cluster end to end
-        - `docs/version-bump.md`: step by step procedure for bumping `version_catalog` and
+        - `docs/release-an-iac-change.md`: step by step procedure for bumping `version_catalog` and
           aligning against the catalog at the new tag
         - `docs/new-environment.md`: adding an environment beyond `staging` and `prod` (CIDR,
           Tailscale, DNS bootstrap, stack deploy)
@@ -65,7 +65,7 @@
         - `units/eks/README.md`: source of truth for &lt;eks_stack&gt;'s unit inventory at
           `version_catalog`
         - `docs/environment-variables.md`: reference for env vars set in `.env`, cross-check
-          against `docs/version-bump.md`'s environment variable diff step
+          against `docs/release-an-iac-change.md`'s environment variable diff step
         - `docs/monitoring.md`: reaching Grafana, Prometheus, and Alertmanager on a deployed
           `staging` or `prod` cluster
     </documentation_map>

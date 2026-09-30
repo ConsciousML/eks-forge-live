@@ -7,10 +7,7 @@ This guide shows you how to change the configuration of [`staging`](/docs/iac/#s
 
 You don't change any unit's code, so the catalog stays the same and you don't need to tag a new version. To change a unit's code, see [Add, Edit, or Remove a Unit](/docs/iac/add-a-unit/) instead.
 
-First, create a branch in your live fork:
-```bash
-git checkout -b <branch>
-```
+It's one of the steps of [Release a Change to Production](/docs/deployment/release-a-change-to-production/), and assumes you've created a branch in your live fork, as in [Create a Live Branch](/docs/deployment/release-a-change-to-production/#create-a-live-branch).
 
 ## Edit the Stack Values
 
@@ -32,7 +29,7 @@ If a value should differ between the two, mark it with a `# STAGING:` or `# PROD
 enable_flow_log = true
 ```
 
-If you delete a `unit` block, see [Removed Units](/docs/iac/bump-the-catalog-version/#removed-units) first: you need its `path` to destroy its resources once CD has applied your change.
+If you delete a `unit` block, see [Removed Units](/docs/iac/release-an-iac-change/#removed-units) first: you need its `path` to destroy its resources once CD has applied your change.
 
 ## Edit the Shared Configuration
 
@@ -58,28 +55,4 @@ If the plan shows the changes you expect, apply them:
 terragrunt run --all apply --non-interactive
 ```
 
-## Roll Out to Staging and Prod
-
-Commit your changes and push the branch, replacing `<message>` and `<branch>`:
-```bash
-git add -A
-git commit -m "<message>" # e.g. "feat: raise critical nodepool cpu limit"
-git push -u origin <branch>
-```
-
-Open a pull request with the label that fits your change, so CI can pass its `check-pr-labels` job:
-- `run-terratest`: deploys `staging`, tests it end to end, and destroys it. Use it by default.
-- `skip-terratest`: skips the `staging` tests. Use it only if you changed nothing but docs.
-
-```bash
-gh pr create --title "<message>" --body "<description>" --label run-terratest # or skip-terratest
-```
-
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/get-started/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
-```bash
-gh pr merge --merge
-```
-
-Merging to `main` triggers CD, which applies your change to `prod`. See [Deploy to Production](/docs/deployment/get-started/promote-to-production/#deploy-to-production) to check the deployment.
-
-If you deleted a `unit` block from the EKS stacks, destroy it in `prod` once CD succeeds, see [Destroy Removed Units](/docs/iac/bump-the-catalog-version/#destroy-removed-units).
+Then continue at [Roll Out to Staging and Prod](/docs/deployment/release-a-change-to-production/#roll-out-to-staging-and-prod).

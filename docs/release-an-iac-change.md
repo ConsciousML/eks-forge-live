@@ -1,12 +1,17 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 
-This guide shows you how to point [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) at a new catalog tag, and align your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last bump. It assumes you've already pushed the tag from your catalog fork. If not, see [Tag a Catalog Release](/docs/iac/add-a-unit/#tag-a-catalog-release).
+# How to Release an IaC Change
 
-To change `staging` or `prod` without a new tag, see [Edit the Live Configuration](/docs/iac/edit-live-configuration/) instead.
+This guide shows you how to ship the changes merged in your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog) to [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod), and align your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last release. It's one of the steps of [Release a Change to Production](/docs/deployment/release-a-change-to-production/), and assumes you've created a branch in your live fork, as in [Create a Live Branch](/docs/deployment/release-a-change-to-production/#create-a-live-branch).
 
-First, create a branch in your live fork:
+## Tag the Catalog Fork
+
+From the root of your catalog fork, tag `main` and push the tag, replacing `<new-tag>` with the next version after your fork's latest tag (e.g. `v0.2.0`):
 ```bash
-git checkout -b <branch>
+git checkout main
+git pull origin main
+git tag <new-tag>
+git push origin <new-tag>
 ```
 
 ## Review the Catalog Changes
@@ -121,7 +126,7 @@ enabled_log_types = []
 enabled_log_types = ["api"]
 ```
 
-Which values are marked can change between tags, so re-read the `# DEV:` comments on every bump.
+Which values are marked can change between tags, so re-read the `# DEV:` comments on every release.
 
 ### Added Units
 
@@ -135,43 +140,19 @@ source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_cata
 
 ### Removed Units
 
-Delete the unit's `unit` block, and note its `path` for later. If other units depend on it, carry over the changes that drop those dependencies in the same bump.
+Delete the unit's `unit` block, and note its `path` for later. If other units depend on it, carry over the changes that drop those dependencies in the same release.
 
-CD doesn't destroy a unit whose block is gone, so its resources stay in `prod` and keep being billed. You destroy it once CD has applied the bump, see [Destroy Removed Units](#destroy-removed-units).
+CD doesn't destroy a unit whose block is gone, so its resources stay in `prod` and keep being billed. You destroy it once CD has applied the release, see [Destroy Removed Units](#destroy-removed-units).
 
 ### Changed Units
 
 Carry over the unit's new or changed `values`. If a `version_*` local changed, set the same module or chart version.
 
-## Roll Out to Staging and Prod
-
-Commit your changes and push the branch, replacing `<branch>` and `<new-tag>`:
-```bash
-git add -A
-git commit -m "bump(catalog): to <new-tag>"
-git push -u origin <branch>
-```
-
-Open a pull request with the label that fits your bump, so CI can pass its `check-pr-labels` job:
-- `run-terratest`: deploys `staging`, tests it end to end, and destroys it. Use it by default.
-- `skip-terratest`: skips the `staging` tests. Use it only if the catalog changed nothing but docs since your last tag.
-
-```bash
-gh pr create --title "bump(catalog): to <new-tag>" --body "Bump the catalog to <new-tag>." --label run-terratest # or skip-terratest
-```
-
-See [Run the Tests](/docs/deployment/get-started/promote-to-production/#run-the-tests) for what the test run does, and [CI/CD](/docs/ci-cd/) for each job.
-
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/get-started/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
-```bash
-gh pr merge --merge --subject "bump(catalog): to <new-tag>"
-```
-
-Merging to `main` triggers CD, which applies the bump to `prod`. See [Deploy to Production](/docs/deployment/get-started/promote-to-production/#deploy-to-production) to check the deployment.
+Then continue at [Roll Out to Staging and Prod](/docs/deployment/release-a-change-to-production/#roll-out-to-staging-and-prod).
 
 ## Destroy Removed Units
 
-If the bump removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
+If your release removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
 
 From the root of your live fork, check out the commit on `main` just before your merge, where the stack still declares them. Then destroy each removed unit, replacing `<path>` with the unit's `path` you noted:
 ```bash
@@ -187,6 +168,3 @@ Then return to `main`:
 ```bash
 git checkout main
 ```
-
-## What's Next
-Next, see [Deploy Your Applications](/docs/applications/get-started/) to change the applications of your cluster.
