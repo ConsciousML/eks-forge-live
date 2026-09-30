@@ -11,7 +11,7 @@ The `prod` EKS stack only changes through a pull request in your [live fork](/do
 
 ## Develop and Test in Dev
 
-Depending on what you changed, first follow:
+Follow every guide that fits your change, if you haven't already:
 - **A unit in your catalog fork**: [Add or Edit a Unit](/docs/iac/add-a-unit/) or [Remove a Unit](/docs/iac/remove-a-unit/).
 - **An app in your app of apps fork**: [Add, Edit, or Remove an App](/docs/applications/add-edit-or-remove-an-app/).
 - **Only the live configuration**: skip to [Create a Live Branch](#create-a-live-branch).
@@ -25,12 +25,12 @@ git checkout -b <branch>
 
 ## Update the Live Fork
 
+If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, release both forks in this same pull request. The `argocd_app_of_apps` unit applies `version_catalog` and `app_of_apps_target_revision` at once, and `apps/values.schema.json` rejects any `appParams` key it doesn't list.
+
 On this branch, follow every guide that fits your change. They all go into the same pull request:
 - **You merged a change in your catalog fork**: [Release an IaC Change](/docs/iac/release-an-iac-change/).
 - **You merged a change in your app of apps fork**: [Release an App Change](/docs/applications/release-an-app-change/).
 - **You're changing the live configuration**: [Edit the Live Configuration](/docs/iac/edit-live-configuration/).
-
-If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, release both forks in this same pull request. The `argocd_app_of_apps` unit applies `version_catalog` and `app_of_apps_target_revision` at once, and `apps/values.schema.json` rejects any `appParams` key it doesn't list.
 
 ## Open a Pull Request
 
@@ -75,12 +75,15 @@ Plan: 0 to add, 1 to change, 0 to destroy.
 
 ## Merge
 
-When every job is green, merge:
+When CI passes, merge:
 ```bash
 gh pr merge --merge
 ```
 
-Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes.
+Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes. To merge without deploying, add the `skip-cd` label to your pull request before merging:
+```bash
+gh pr edit --add-label skip-cd
+```
 
 ## Check Prod
 

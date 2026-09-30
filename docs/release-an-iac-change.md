@@ -159,7 +159,7 @@ Then return to [Update the Live Fork](/docs/deployment/release-a-change-to-produ
 
 If your release removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
 
-From the root of your live fork, pull `main` and check out the commit just before your merge commit, where the stack still declares them, replacing `<commit>` with its hash:
+From the root of your live fork, pull `main` and check out the last commit on `main` before your pull request was merged, where the stack still declares them, replacing `<commit>` with its hash:
 ```bash
 git checkout main
 git pull origin main
