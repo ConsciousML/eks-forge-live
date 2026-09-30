@@ -7,14 +7,14 @@ import TabItem from '@theme/TabItem';
 
 This guide shows you how to ship a change to [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod).
 
-The `prod` EKS stack only changes through a pull request in your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository). Your catalog and app of apps forks only produce the tags it pins.
+The `prod` EKS stack only changes through a pull request in your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository). Your catalog and app of apps forks only produce tags, which your live fork pins.
 
 ## Develop and Test in Dev
 
 Follow every guide that fits your change, if you haven't already:
 - **A unit in your catalog fork**: [Add or Edit a Unit](/docs/iac/add-a-unit/) or [Remove a Unit](/docs/iac/remove-a-unit/).
 - **An app in your app of apps fork**: [Add, Edit, or Remove an App](/docs/applications/add-edit-or-remove-an-app/).
-- **Only the live configuration**: skip to [Create a Live Branch](#create-a-live-branch).
+- **Only the live configuration**: nothing to develop in dev, continue to [Create a Live Branch](#create-a-live-branch).
 
 ## Create a Live Branch
 
@@ -25,7 +25,9 @@ git checkout -b <branch>
 
 ## Update the Live Fork
 
-If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, release both forks in this same pull request. The `argocd_app_of_apps` unit applies `version_catalog` and `app_of_apps_target_revision` at once, and `apps/values.schema.json` rejects any `appParams` key it doesn't list.
+:::warning
+If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, follow both [Release an IaC Change](/docs/iac/release-an-iac-change/) and [Release an App Change](/docs/applications/release-an-app-change/) in this pull request. `apps/values.schema.json` rejects any `appParams` key it doesn't list, so releasing one fork without the other breaks the ArgoCD sync.
+:::
 
 On this branch, follow every guide that fits your change. They all go into the same pull request:
 - **You merged a change in your catalog fork**: [Release an IaC Change](/docs/iac/release-an-iac-change/).
@@ -87,7 +89,7 @@ gh pr edit --add-label skip-cd
 
 ## Check Prod
 
-When CD is done, connect `kubectl` to your `prod` cluster, replacing `<region-code>` with the region set in [`live/prod/region.hcl`](../live/prod/region.hcl):
+When CD is done, if you followed [Disable the Public EKS Endpoint](/docs/security/improvements/#disable-the-public-eks-endpoint), connect to Tailscale first. Then connect `kubectl` to your `prod` cluster, replacing `<region-code>` with the region set in [`live/prod/region.hcl`](../live/prod/region.hcl):
 ```bash
 aws eks update-kubeconfig --region <region-code> --name prod-cluster
 ```
