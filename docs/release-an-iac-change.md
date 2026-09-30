@@ -6,10 +6,16 @@ This guide shows you how to ship the changes merged in your [catalog fork](/docs
 
 ## Tag the Catalog Fork
 
-From the root of your catalog fork, tag `main` and push the tag, replacing `<new-tag>` with the next version after your fork's latest tag (e.g. `v0.2.0`):
+From the root of your catalog fork, pull `main` and print your fork's latest tag:
 ```bash
 git checkout main
 git pull origin main
+git fetch --tags
+git tag --sort=-v:refname | head -1
+```
+
+Tag `main` with the next minor version after it and push the tag, replacing `<new-tag>` (e.g. `v0.2.0` after `v0.1.9`):
+```bash
 git tag <new-tag>
 git push origin <new-tag>
 ```
@@ -26,7 +32,6 @@ locals {
 
 From the root of your catalog fork, list the files that changed between your current tag and the new one, replacing `<old-tag>` and `<new-tag>`:
 ```bash
-git fetch --tags
 git diff --stat <old-tag> <new-tag> -- mise.toml .env.example .github/ pipelines/
 ```
 
@@ -148,13 +153,20 @@ CD doesn't destroy a unit whose block is gone, so its resources stay in `prod` a
 
 Carry over the unit's new or changed `values`. If a `version_*` local changed, set the same module or chart version.
 
-Then continue at [Roll Out to Staging and Prod](/docs/deployment/release-a-change-to-production/#roll-out-to-staging-and-prod).
+Then return to [Update the Live Fork](/docs/deployment/release-a-change-to-production/#update-the-live-fork).
 
 ## Destroy Removed Units
 
 If your release removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
 
-From the root of your live fork, check out the commit on `main` just before your merge, where the stack still declares them. Then destroy each removed unit, replacing `<path>` with the unit's `path` you noted:
+From the root of your live fork, pull `main` and check out the commit just before your merge commit, where the stack still declares them, replacing `<commit>` with its hash:
+```bash
+git checkout main
+git pull origin main
+git checkout <commit>
+```
+
+Then destroy each removed unit, replacing `<path>` with the unit's `path` you noted:
 ```bash
 source .env
 cd live/prod/eks/stack

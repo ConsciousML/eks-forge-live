@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 This guide shows you how to ship a change to [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod).
 
-`prod` only changes through a pull request in your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository). Your catalog and app of apps forks only produce the tags it pins.
+The `prod` EKS stack only changes through a pull request in your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository). Your catalog and app of apps forks only produce the tags it pins.
 
 ## Develop and Test in Dev
 
@@ -32,7 +32,7 @@ On this branch, follow every guide that fits your change. They all go into the s
 
 If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, release both forks in this same pull request. The `argocd_app_of_apps` unit applies `version_catalog` and `app_of_apps_target_revision` at once, and `apps/values.schema.json` rejects any `appParams` key it doesn't list.
 
-## Roll Out to Staging and Prod
+## Open a Pull Request
 
 From the root of your live fork, commit your changes and push the branch, replacing `<message>` and `<branch>`:
 ```bash
@@ -62,14 +62,39 @@ gh pr create --title "<message>" --body "<description>" --label skip-terratest
 </TabItem>
 </Tabs>
 
-See [CI/CD](/docs/ci-cd/) for each job.
+With `run-terratest`, CI takes around 1 hour. See [CI/CD](/docs/ci-cd/) for each job. If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/).
 
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/get-started/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
+## Review the Production Plan
+
+Once the tests finish, CI posts a **Production Plan Available** comment on your pull request. Each push posts a new one, so check that its **Commit** matches your latest push.
+
+Download the plan from its link, unzip it, and open `prod-plan-output.html` in your browser. Check that it only changes what you expect in `prod`, and that nothing is destroyed unless you removed it:
+```text
+Plan: 0 to add, 1 to change, 0 to destroy.
+```
+
+## Merge
+
+When every job is green, merge:
 ```bash
 gh pr merge --merge
 ```
 
-Merging to `main` triggers CD, which applies your change to `prod`. See [Deploy to Production](/docs/deployment/get-started/promote-to-production/#deploy-to-production) to check the deployment.
+Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes.
+
+## Check Prod
+
+When CD is done, connect `kubectl` to your `prod` cluster, replacing `<region-code>` with the region set in [`live/prod/region.hcl`](../live/prod/region.hcl):
+```bash
+aws eks update-kubeconfig --region <region-code> --name prod-cluster
+```
+
+Check that ArgoCD synced the Kubernetes resources:
+```bash
+kubectl get app -n argocd
+```
+
+Every application should show `Synced` and `Healthy`.
 
 ## Clean Up After the Rollout
 

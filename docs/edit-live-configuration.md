@@ -55,4 +55,4 @@ If the plan shows the changes you expect, apply them:
 terragrunt run --all apply --non-interactive
 ```
 
-Then continue at [Roll Out to Staging and Prod](/docs/deployment/release-a-change-to-production/#roll-out-to-staging-and-prod).
+Then return to [Update the Live Fork](/docs/deployment/release-a-change-to-production/#update-the-live-fork).
