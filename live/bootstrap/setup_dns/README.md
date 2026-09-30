@@ -22,6 +22,7 @@ setup_dns/
 Next, run the following for each environment (replacing `<environment>` with `staging` and then `prod`), from the root of your live fork:
 ```bash
 cd live/bootstrap/setup_dns/<environment>/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 terragrunt stack output --json setup_dns.route53_hosted_zone.name_servers
@@ -59,4 +60,4 @@ dig NS <environment>.yourdomain.com
 
 Delegation is working when 4 AWS nameservers appear in the `ANSWER SECTION`.
 
-For more information, read the [Setup DNS quickstart](/docs/quickstart/bootstrap/setup_dns/).
+For more information, read [DNS Bootstrap](/docs/quickstart/bootstrap/setup_dns/).

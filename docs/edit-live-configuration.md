@@ -1,16 +1,13 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 
-This guide shows you how to change the configuration of [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) from your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository):
+This guide shows you how to change the configuration of [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) from your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository):
 - The `values` your [units](/docs/iac/#units) receive.
 - The shared `.hcl` files.
 - The bootstrap pipelines.
 
-You don't change any unit's code, so the catalog stays the same and you don't need to tag a new version. To change a unit's code, see [Add, Edit, or Remove a Unit](/docs/iac/add-a-unit/) instead.
+You don't change any unit's code, so the catalog stays the same and you don't need to tag a new version. To change a unit's code, see [Add or Edit a Unit](/docs/iac/add-a-unit/) or [Remove a Unit](/docs/iac/remove-a-unit/) instead.
 
-First, create a branch in your live fork:
-```bash
-git checkout -b <branch>
-```
+It's one of the steps of [Release a Change to Production](/docs/deployment/release-a-change-to-production/), and assumes you've created a branch in your live fork, as in [Create a Live Branch](/docs/deployment/release-a-change-to-production/#create-a-live-branch).
 
 ## Edit the Stack Values
 
@@ -32,15 +29,15 @@ If a value should differ between the two, mark it with a `# STAGING:` or `# PROD
 enable_flow_log = true
 ```
 
-If you delete a `unit` block, see [Removed Units](/docs/iac/bump-the-catalog-version/#removed-units) first: you need its `path` to destroy its resources once CD has applied your change.
+If you delete a `unit` block, see [Removed Units](/docs/iac/release-an-iac-change/#removed-units) first: you need its `path` to destroy its resources once CD has applied your change.
 
 ## Edit the Shared Configuration
 
-The `.hcl` files at the root of `live/`, such as [`dns.hcl`](../live/dns.hcl) and [`network.hcl`](../live/network.hcl), are shared: a change there applies to both `staging` and `prod`. The files under `live/<env>/` and `live/<env>/eks/`, such as `region.hcl`, `domains.hcl`, and `vpc.hcl`, only apply to their environment. See the [HCL configuration reference](/docs/reference/hcl_configuration/) for what each file sets.
+The `.hcl` files at the root of `live/`, such as [`dns.hcl`](../live/dns.hcl) and [`network.hcl`](../live/network.hcl), are shared: a change there applies to both `staging` and `prod`. The files under `live/<env>/` and `live/<env>/eks/`, such as `region.hcl`, `domains.hcl`, and `vpc.hcl`, only apply to their environment. See the [HCL Configuration](/docs/reference/hcl_configuration/) reference for what each file sets.
 
 ## Edit the Bootstrap Configuration
 
-Each [bootstrap pipeline](/docs/deployment/live-repository-setup/#bootstrap) has its own stack file under `live/bootstrap/<pipeline>/`. Edit its stack or unit `values` there, the same way as in the EKS stacks. Pipelines with one stack per environment, such as `setup_dns/` and `slack/channels/`, have a `staging/` and a `prod/` folder: make the same change in both. See the [bootstrap reference](/docs/reference/bootstrap/) for each pipeline's inputs.
+Each [bootstrap pipeline](/docs/deployment/get-started/live-repository-setup/#bootstrap) has its own stack file under `live/bootstrap/<pipeline>/`. Edit its stack or unit `values` there, the same way as in the EKS stacks. Pipelines with one stack per environment, such as `setup_dns/` and `slack/channels/`, have a `staging/` and a `prod/` folder: make the same change in both. See the [Bootstrap Pipelines](/docs/reference/bootstrap/) reference for each pipeline's inputs.
 
 CI and CD never apply the bootstrap pipelines, so you apply your change yourself. From the root of your live fork, plan all of them at once:
 ```bash
@@ -58,28 +55,4 @@ If the plan shows the changes you expect, apply them:
 terragrunt run --all apply --non-interactive
 ```
 
-## Roll Out to Staging and Prod
-
-Commit your changes and push the branch, replacing `<message>` and `<branch>`:
-```bash
-git add -A
-git commit -m "<message>" # e.g. "feat: raise critical nodepool cpu limit"
-git push -u origin <branch>
-```
-
-Open a pull request with the label that fits your change, so CI can pass its `check-pr-labels` job:
-- `run-terratest`: deploys `staging`, tests it end to end, and destroys it. Use it by default.
-- `skip-terratest`: skips the `staging` tests. Use it only if you changed nothing but docs.
-
-```bash
-gh pr create --title "<message>" --body "<description>" --label run-terratest # or skip-terratest
-```
-
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). When every job is green, merge:
-```bash
-gh pr merge --merge
-```
-
-Merging to `main` triggers CD, which applies your change to `prod`. See [Deploy to Production](/docs/deployment/promote-to-production/#deploy-to-production) to check the deployment.
-
-If you deleted a `unit` block from the EKS stacks, destroy it in `prod` once CD succeeds, see [Destroy Removed Units](/docs/iac/bump-the-catalog-version/#destroy-removed-units).
+Then return to [Update the Live Fork](/docs/deployment/release-a-change-to-production/#update-the-live-fork).

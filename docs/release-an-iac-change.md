@@ -1,12 +1,23 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 
-This guide shows you how to point [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) at a new catalog tag, and align your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last bump. It assumes you've already pushed the tag from your catalog fork. If not, see [Tag a Catalog Release](/docs/iac/add-a-unit/#tag-a-catalog-release).
+# How to Release an IaC Change
 
-To change `staging` or `prod` without a new tag, see [How to Edit the Live Configuration](/docs/iac/edit-live-configuration/) instead.
+This guide shows you how to ship the changes merged in your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog) to [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod), and align your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last release. It's one of the steps of [Release a Change to Production](/docs/deployment/release-a-change-to-production/), and assumes you've created a branch in your live fork, as in [Create a Live Branch](/docs/deployment/release-a-change-to-production/#create-a-live-branch).
 
-First, create a branch in your live fork:
+## Tag the Catalog Fork
+
+From the root of your catalog fork, pull `main` and print your fork's latest tag:
 ```bash
-git checkout -b <branch>
+git checkout main
+git pull origin main
+git fetch --tags
+git tag --sort=-v:refname | head -1
+```
+
+Tag `main` with the next minor version after it and push the tag, replacing `<new-tag>` (e.g. `v0.2.0` after `v0.1.9`):
+```bash
+git tag <new-tag>
+git push origin <new-tag>
 ```
 
 ## Review the Catalog Changes
@@ -21,7 +32,6 @@ locals {
 
 From the root of your catalog fork, list the files that changed between your current tag and the new one, replacing `<old-tag>` and `<new-tag>`:
 ```bash
-git fetch --tags
 git diff --stat <old-tag> <new-tag> -- mise.toml .env.example .github/ pipelines/
 ```
 
@@ -47,7 +57,7 @@ mise install
 
 Skip tools that only exist in the catalog's `mise.toml`, such as `tflint` and `trivy`. They serve catalog development, not live.
 
-If the catalog added a variable to `.env.example`, check what uses it in the [environment variables reference](/docs/reference/environment_variable/). Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
+If the catalog added a variable to `.env.example`, check what uses it in the [Environment Variables](/docs/reference/environment_variable/) reference. Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
 ```bash
 # See https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/environment-variables.md#slack_bot_token
 export SLACK_BOT_TOKEN=
@@ -93,6 +103,10 @@ If the plan shows changes, apply them:
 terragrunt run --all apply --non-interactive
 ```
 
+## Update the Shared Configuration
+
+If the diff touches a shared `.hcl` file under `pipelines/`, such as `dns.hcl` or `domains.hcl`, port the change to its live counterpart. The [HCL Configuration](/docs/reference/hcl_configuration/#layout) reference maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
+
 ## Update the EKS Stacks
 
 Set `version_catalog` to the new tag at the top of both [`live/staging/eks/stack/terragrunt.stack.hcl`](../live/staging/eks/stack/terragrunt.stack.hcl) and [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl), replacing `<new-tag>`:
@@ -102,8 +116,6 @@ locals {
   ...
 }
 ```
-
-If the diff touches a shared `.hcl` file under `pipelines/`, port the change to its live counterpart. The [HCL configuration reference](/docs/reference/hcl_configuration/#layout) maps each catalog file to its live counterpart. Watch for renamed `locals`, not just added ones: every stack file that reads the old name breaks.
 
 Then apply the diff of [`pipelines/dev/eks/stack/terragrunt.stack.hcl`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/dev/eks/stack/terragrunt.stack.hcl) to both stack files, following the sections below for each added, removed, or changed unit.
 
@@ -119,7 +131,7 @@ enabled_log_types = []
 enabled_log_types = ["api"]
 ```
 
-Which values are marked can change between tags, so re-read the `# DEV:` comments on every bump.
+Which values are marked can change between tags, so re-read the `# DEV:` comments on every release.
 
 ### Added Units
 
@@ -133,48 +145,32 @@ source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_cata
 
 ### Removed Units
 
-Delete the unit's `unit` block, and note its `path` for later. If other units depend on it, carry over the changes that drop those dependencies in the same bump.
+Delete the unit's `unit` block, and note its `path` for later. If other units depend on it, carry over the changes that drop those dependencies in the same release.
 
-CD doesn't destroy a unit whose block is gone, so its resources stay in `prod` and keep being billed. You destroy it once CD has applied the bump, see [Destroy Removed Units](#destroy-removed-units).
+CD doesn't destroy a unit whose block is gone, so its resources stay in `prod` and keep being billed. You destroy it once CD has applied the release, see [Destroy Removed Units](#destroy-removed-units).
 
 ### Changed Units
 
 Carry over the unit's new or changed `values`. If a `version_*` local changed, set the same module or chart version.
 
-## Roll Out to Staging and Prod
-
-Commit your changes and push the branch, replacing `<branch>` and `<new-tag>`:
-```bash
-git add -A
-git commit -m "bump(catalog): to <new-tag>"
-git push -u origin <branch>
-```
-
-Open a pull request with the label that fits your bump, so CI can pass its `check-pr-labels` job:
-- `run-terratest`: deploys `staging`, tests it end to end, and destroys it. Use it by default.
-- `skip-terratest`: skips the `staging` tests. Use it only if the catalog changed nothing but docs since your last tag.
-
-```bash
-gh pr create --title "bump(catalog): to <new-tag>" --body "Bump the catalog to <new-tag>." --label run-terratest # or skip-terratest
-```
-
-See [Run the Tests](/docs/deployment/promote-to-production/#run-the-tests) for what the test run does, and [CI/CD](/docs/ci-cd/) for each job.
-
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). When every job is green, merge:
-```bash
-gh pr merge --merge --subject "bump(catalog): to <new-tag>"
-```
-
-Merging to `main` triggers CD, which applies the bump to `prod`. See [Deploy to Production](/docs/deployment/promote-to-production/#deploy-to-production) to check the deployment.
+Then return to [Update the Live Fork](/docs/deployment/release-a-change-to-production/#update-the-live-fork).
 
 ## Destroy Removed Units
 
-If the bump removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
+If your release removed units, destroy them in `prod` once CD succeeds. At that point, no unit left in `prod` depends on them.
 
-From the root of your live fork, check out the commit on `main` just before your merge, where the stack still declares them. Then destroy each removed unit, replacing `<path>` with the unit's `path` you noted:
+From the root of your live fork, pull `main` and check out the last commit on `main` before your pull request was merged, where the stack still declares them, replacing `<commit>` with its hash:
+```bash
+git checkout main
+git pull origin main
+git checkout <commit>
+```
+
+Then destroy each removed unit, replacing `<path>` with the unit's `path` you noted:
 ```bash
 source .env
 cd live/prod/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 cd .terragrunt-stack/<path>
 terragrunt destroy

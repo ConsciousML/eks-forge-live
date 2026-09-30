@@ -6,6 +6,7 @@ From the root of your live fork, run:
 ```bash
 source .env
 cd live/bootstrap/slack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```
@@ -17,4 +18,4 @@ gh secret list
 
 You should see secrets from each pipeline, including `AWS_ROLE_ARN`, `TS_OAUTH_CLIENT_ID`, and `SLACK_BOT_TOKEN`.
 
-Finally, join the `staging-` and `prod-` prefixed channels, as you did for the `dev-` ones in the [Slack quickstart](/docs/quickstart/bootstrap/slack/) (see [`live/bootstrap/slack/channels.hcl`](channels.hcl) for the base names).
+Finally, join the `staging-` and `prod-` prefixed channels, as you did for the `dev-` ones in [Slack Bootstrap](/docs/quickstart/bootstrap/slack/) (see [`live/bootstrap/slack/channels.hcl`](channels.hcl) for the base names).

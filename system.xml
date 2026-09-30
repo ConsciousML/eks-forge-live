@@ -50,14 +50,15 @@
     </bootstrap>
 
     <documentation_map>
-        - `README.md`: repo overview, prerequisites, deploying a staging EKS cluster end to end
-        - `docs/version-bump.md`: step by step procedure for bumping `version_catalog` and
+        - `docs/setup.md`, `docs/deploy-to-staging.md`, `docs/promote-to-production.md`: setting
+          up this repo, deploying a `staging` EKS cluster, and promoting it to `prod`
+        - `docs/edit-live-configuration.md`: changing a live stack's configuration
+        - `docs/release-an-iac-change.md`: step by step procedure for bumping `version_catalog` and
           aligning against the catalog at the new tag
-        - `docs/new-environment.md`: adding an environment beyond `staging` and `prod` (CIDR,
-          Tailscale, DNS bootstrap, stack deploy)
-        - `docs/troubleshoot.md`: when stuck on a problem, read this
+        - `docs/release-a-change-to-production.md`: shipping a change from `staging` to `prod`
+        - `docs/limitations-and-improvements.md`: known CI/CD limitations
+        - `docs/remove-eks-forge.md`: tearing down the live side of EKS Forge
         - `tests/README.md`: what Terratest covers and how to extend it
-        - `docs/ci-cd.md`: details on CI/CD pipelines
 
         Catalog docs:
         - `pipelines/bootstrap/README.md`: source of truth for &lt;bootstrap&gt;'s stack
@@ -65,9 +66,7 @@
         - `units/eks/README.md`: source of truth for &lt;eks_stack&gt;'s unit inventory at
           `version_catalog`
         - `docs/environment-variables.md`: reference for env vars set in `.env`, cross-check
-          against `docs/version-bump.md`'s environment variable diff step
-        - `docs/monitoring.md`: reaching Grafana, Prometheus, and Alertmanager on a deployed
-          `staging` or `prod` cluster
+          against `docs/release-an-iac-change.md`'s environment variable diff step
     </documentation_map>
 
     <commits>

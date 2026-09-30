@@ -4,13 +4,13 @@
 In this tutorial, you'll fork the [live repository](https://github.com/ConsciousML/terragrunt-template-live-eks), install its CLI tools, and point it at your catalog fork.
 
 ## Prerequisites
-Complete the [quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
+Complete the [Quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
 
 ## Fork the Live Repository
-The live repository deploys the [catalog stacks](/docs/architecture/) in the `staging` and `prod` environments.
+The live repository deploys the stacks of the [catalog](/docs/architecture/) in the `staging` and `prod` environments.
 Like the catalog, it's meant to be forked and extended.
 
-Follow the same steps as when you [forked the catalog](/docs/quickstart/installation/#fork-the-eks-forge-catalog). First, [create an empty repository](https://github.com/new) on GitHub, private or public. Leave the README, `.gitignore`, and license options unset.
+Follow the same steps as in [Fork the EKS Forge Catalog](/docs/quickstart/installation/#fork-the-eks-forge-catalog). First, create an empty repository from [GitHub's new repository page](https://github.com/new), private or public. Leave the README, `.gitignore`, and license options unset.
 
 :::warning
 Create it under the same GitHub owner (user or organization) as your catalog fork. The [bootstrap pipelines](#bootstrap) write GitHub secrets and deploy keys under the catalog fork's owner.
@@ -32,9 +32,30 @@ git push origin --tags
 ```
 
 ## Install the CLI Tools
-Stay at the root of your live repository.
+From the root of your live fork, install the tools pinned in [`mise.toml`](../mise.toml) and [`mise.local.toml`](../mise.local.toml):
+```bash
+mise trust
+mise install
+```
 
-Live uses [mise-en-place](https://mise.jdx.dev/) like the catalog, with a slightly different tool set pinned in [`mise.toml`](../mise.toml) and [`mise.local.toml`](../mise.local.toml). Follow the [CLI tools installation steps](/docs/quickstart/installation/#install-the-cli-tools) again, this time from your live fork.
+## Enable the Pre-commit Hooks
+Your fork comes with [prek](https://github.com/j178/prek) hooks, defined in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml). They check the formatting of your `.hcl` files, so you'll catch issues before you push.
+
+`mise` already installed `prek`. Wire the hooks into git:
+```bash
+prek install
+```
+
+Run every hook against the whole repository:
+```bash
+prek run --all-files
+```
+You'll see the hook pass:
+```
+Terragrunt hcl fmt.......................................................Passed
+```
+
+From now on, the hooks run on the files you change each time you `git commit`.
 
 ## Live Configuration
 Live reads `.hcl` configuration files under [`live/`](../live/), like the catalog's `pipelines/`. They point to the catalog's [units](/docs/iac/#units), so `staging` and `prod` use the same components you deployed in [`dev`](/docs/iac/#dev).
@@ -56,7 +77,7 @@ Each [environment](/docs/iac/#environments) sets its AWS region in its own `regi
 - [`live/prod/region.hcl`](../live/prod/region.hcl)
 - [`live/bootstrap/region.hcl`](../live/bootstrap/region.hcl)
 
-Like when you [configured the catalog](/docs/quickstart/configuration/#catalog-configuration), set `region` and `azs` in the `staging` and `prod` files:
+Like in [Catalog Configuration](/docs/quickstart/configuration/#catalog-configuration), set `region` and `azs` in the `staging` and `prod` files:
 ```hcl
 locals {
   region = "us-east-1"
@@ -69,7 +90,7 @@ You can also leave them as is if you plan to use `us-east-1`.
 
 ## Bootstrap
 :::warning
-These pipelines need to run only once per live fork before deploying to [`staging`](/docs/deployment/deploy-to-staging/) and [`prod`](/docs/deployment/promote-to-production/).
+These pipelines need to run only once per live fork before deploying to [`staging`](/docs/deployment/get-started/deploy-to-staging/) and [`prod`](/docs/deployment/get-started/promote-to-production/).
 :::
 
 You'll run the bootstrap pipelines from your live fork, as you did from your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog) in the [quickstart bootstrap](/docs/quickstart/bootstrap/).

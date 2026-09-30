@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 # Deploy to Staging
 
-Now that you've [forked](/docs/deployment/live-repository-setup/#fork-the-live-repository) and [configured](/docs/deployment/live-repository-setup/#live-configuration) the live repository, installed its [CLI tools](/docs/deployment/live-repository-setup/#install-the-cli-tools), and run the [bootstrap pipelines](/docs/deployment/live-repository-setup/#bootstrap), you're ready to deploy the EKS stack in the [`staging` environment](/docs/iac/#staging).
+Now that you've completed [Live Repository Setup](/docs/deployment/get-started/live-repository-setup/), you're ready to deploy the EKS stack in the [`staging` environment](/docs/iac/#staging).
 
 ## Run the Terragrunt Stack
 From the root of your live fork, run the following commands to deploy the `staging` environment:
@@ -9,6 +9,7 @@ From the root of your live fork, run the following commands to deploy the `stagi
 ```bash
 source .env
 cd live/staging/eks/stack
+terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```
@@ -31,7 +32,7 @@ unit "vpc" {
 In `dev`, the catalog used units from its own local paths. Here, live pulls them from your catalog fork on GitHub, pinned to the `version_catalog` tag.
 
 ## Connect to the Cluster
-When the deployment is done, connect `kubectl` to your `staging` EKS cluster (replace `<region-code>` with the region you set in [`live/staging/region.hcl`](/docs/deployment/live-repository-setup/#live-configuration)):
+When the deployment is done, connect `kubectl` to your `staging` EKS cluster (replace `<region-code>` with the region you set in [`live/staging/region.hcl`](../live/staging/region.hcl)):
 ```bash
 aws eks update-kubeconfig --region <region-code> --name staging-cluster
 ```
@@ -109,4 +110,4 @@ terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
 
 ## What's Next
-[Promote your changes to production](/docs/deployment/promote-to-production/) through a pull request.
+Next, see [Promote Your First Release](/docs/deployment/get-started/promote-to-production/) to ship your changes through a pull request.

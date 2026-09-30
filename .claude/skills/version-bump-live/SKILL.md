@@ -3,7 +3,7 @@ name: version-bump-live
 description: Bump version_catalog in the live staging and prod stack files and align live against the catalog at the new tag. Use when bumping the catalog version this repo depends on.
 ---
 
-Follow [`docs/version-bump.md`](../../../docs/version-bump.md) for the steps.
+Follow [`docs/release-an-iac-change.md`](../../../docs/release-an-iac-change.md) for the steps.
 
 On top of it:
 - Do each section in order, top to bottom. Finish one section's changes before starting the next.

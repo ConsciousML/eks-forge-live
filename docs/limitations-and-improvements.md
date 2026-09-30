@@ -2,7 +2,7 @@
 # Limitations & Improvements
 
 EKS Forge's CI/CD is designed as a working solution for multi-environment IaC. This documentation will explain the limitations of its design, and how to improve it once you outgrow it.
-For the full CI/CD flow, read the [CI/CD overview](/docs/ci-cd/).
+For the full CI/CD flow, read the [CI/CD](/docs/ci-cd/) overview.
 
 ## One Writer per Environment
 
@@ -81,7 +81,7 @@ Persistent staging also loses the benefits of [ephemeral staging](#why-ephemeral
 
 If persistent staging isn't enough, for example when several teams ship to the same environments, or when you need a hard guarantee that `prod` applies exactly what was reviewed, consider [Atlantis](https://www.runatlantis.io/).
 
-Atlantis runs plan and apply from PR comments, and applies before the merge instead of after. It can then [merge the PR automatically](https://www.runatlantis.io/docs/automerging) once every apply succeeds.
+Atlantis runs plan and apply from PR comments, and applies before the merge instead of after. It can then merge the PR once every apply succeeds, with [automerging](https://www.runatlantis.io/docs/automerging).
 
 It solves the stale plan: Atlantis applies the saved plan file, so the diff you reviewed is the diff that gets applied. Its `undiverged` [apply requirement](https://www.runatlantis.io/docs/command-requirements) also refuses an apply while the PR is behind `main`, so freshness is checked at apply time without requiring branches to be up to date before merging.
 
