@@ -1,6 +1,6 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 
-This guide shows you how to change the configuration of [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) from your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository):
+This guide shows you how to change the configuration of [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) from your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository):
 - The `values` your [units](/docs/iac/#units) receive.
 - The shared `.hcl` files.
 - The bootstrap pipelines.
@@ -40,7 +40,7 @@ The `.hcl` files at the root of `live/`, such as [`dns.hcl`](../live/dns.hcl) an
 
 ## Edit the Bootstrap Configuration
 
-Each [bootstrap pipeline](/docs/deployment/live-repository-setup/#bootstrap) has its own stack file under `live/bootstrap/<pipeline>/`. Edit its stack or unit `values` there, the same way as in the EKS stacks. Pipelines with one stack per environment, such as `setup_dns/` and `slack/channels/`, have a `staging/` and a `prod/` folder: make the same change in both. See the [Bootstrap Pipelines](/docs/reference/bootstrap/) reference for each pipeline's inputs.
+Each [bootstrap pipeline](/docs/deployment/get-started/live-repository-setup/#bootstrap) has its own stack file under `live/bootstrap/<pipeline>/`. Edit its stack or unit `values` there, the same way as in the EKS stacks. Pipelines with one stack per environment, such as `setup_dns/` and `slack/channels/`, have a `staging/` and a `prod/` folder: make the same change in both. See the [Bootstrap Pipelines](/docs/reference/bootstrap/) reference for each pipeline's inputs.
 
 CI and CD never apply the bootstrap pipelines, so you apply your change yourself. From the root of your live fork, plan all of them at once:
 ```bash
@@ -75,11 +75,11 @@ Open a pull request with the label that fits your change, so CI can pass its `ch
 gh pr create --title "<message>" --body "<description>" --label run-terratest # or skip-terratest
 ```
 
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
+Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/get-started/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
 ```bash
 gh pr merge --merge
 ```
 
-Merging to `main` triggers CD, which applies your change to `prod`. See [Deploy to Production](/docs/deployment/promote-to-production/#deploy-to-production) to check the deployment.
+Merging to `main` triggers CD, which applies your change to `prod`. See [Deploy to Production](/docs/deployment/get-started/promote-to-production/#deploy-to-production) to check the deployment.
 
 If you deleted a `unit` block from the EKS stacks, destroy it in `prod` once CD succeeds, see [Destroy Removed Units](/docs/iac/bump-the-catalog-version/#destroy-removed-units).

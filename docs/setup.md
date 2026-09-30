@@ -71,7 +71,7 @@ You can also leave them as is if you plan to use `us-east-1`.
 
 ## Bootstrap
 :::warning
-These pipelines need to run only once per live fork before deploying to [`staging`](/docs/deployment/deploy-to-staging/) and [`prod`](/docs/deployment/promote-to-production/).
+These pipelines need to run only once per live fork before deploying to [`staging`](/docs/deployment/get-started/deploy-to-staging/) and [`prod`](/docs/deployment/get-started/promote-to-production/).
 :::
 
 You'll run the bootstrap pipelines from your live fork, as you did from your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog) in the [quickstart bootstrap](/docs/quickstart/bootstrap/).

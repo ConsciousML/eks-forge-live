@@ -1,6 +1,6 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 
-This guide shows you how to point [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) at a new catalog tag, and align your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last bump. It assumes you've already pushed the tag from your catalog fork. If not, see [Tag a Catalog Release](/docs/iac/add-a-unit/#tag-a-catalog-release).
+This guide shows you how to point [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) at a new catalog tag, and align your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository) with what changed in the catalog since your last bump. It assumes you've already pushed the tag from your catalog fork. If not, see [Tag a Catalog Release](/docs/iac/add-a-unit/#tag-a-catalog-release).
 
 To change `staging` or `prod` without a new tag, see [Edit the Live Configuration](/docs/iac/edit-live-configuration/) instead.
 
@@ -160,14 +160,14 @@ Open a pull request with the label that fits your bump, so CI can pass its `chec
 gh pr create --title "bump(catalog): to <new-tag>" --body "Bump the catalog to <new-tag>." --label run-terratest # or skip-terratest
 ```
 
-See [Run the Tests](/docs/deployment/promote-to-production/#run-the-tests) for what the test run does, and [CI/CD](/docs/ci-cd/) for each job.
+See [Run the Tests](/docs/deployment/get-started/promote-to-production/#run-the-tests) for what the test run does, and [CI/CD](/docs/ci-cd/) for each job.
 
-Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
+Before merging, download the production plan from the **Production Plan Available** comment CI posts on your pull request, and check what it changes in `prod`, see [Watch CI](/docs/deployment/get-started/promote-to-production/#watch-ci). If a job fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/). When every job is green, merge:
 ```bash
 gh pr merge --merge --subject "bump(catalog): to <new-tag>"
 ```
 
-Merging to `main` triggers CD, which applies the bump to `prod`. See [Deploy to Production](/docs/deployment/promote-to-production/#deploy-to-production) to check the deployment.
+Merging to `main` triggers CD, which applies the bump to `prod`. See [Deploy to Production](/docs/deployment/get-started/promote-to-production/#deploy-to-production) to check the deployment.
 
 ## Destroy Removed Units
 

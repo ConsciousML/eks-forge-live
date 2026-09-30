@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 # Deploy to Staging
 
-Now that you've completed [Live Repository Setup](/docs/deployment/live-repository-setup/), you're ready to deploy the EKS stack in the [`staging` environment](/docs/iac/#staging).
+Now that you've completed [Live Repository Setup](/docs/deployment/get-started/live-repository-setup/), you're ready to deploy the EKS stack in the [`staging` environment](/docs/iac/#staging).
 
 ## Run the Terragrunt Stack
 From the root of your live fork, run the following commands to deploy the `staging` environment:
@@ -110,4 +110,4 @@ terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
 
 ## What's Next
-Next, see [Promote to Production](/docs/deployment/promote-to-production/) to ship your changes through a pull request.
+Next, see [Promote Your First Release](/docs/deployment/get-started/promote-to-production/) to ship your changes through a pull request.

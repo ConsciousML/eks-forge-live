@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
-# Promote to Production
+# Promote Your First Release
 
-Now that you've completed [Deploy to Staging](/docs/deployment/deploy-to-staging/), you're ready to promote a new catalog version to `prod` through a pull request. You'll tag your catalog fork, bump `version_catalog` in a pull request, watch [CI](/docs/ci-cd/) test it on `staging`, and merge it so CD deploys `prod`. Finally, you'll destroy `prod`.
+Now that you've completed [Deploy to Staging](/docs/deployment/get-started/deploy-to-staging/), you're ready to promote a new catalog version to `prod` through a pull request. You'll tag your catalog fork, bump `version_catalog` in a pull request, watch [CI](/docs/ci-cd/) test it on `staging`, and merge it so CD deploys `prod`. Finally, you'll destroy `prod`.
 
 ## Tag the Catalog
 From the root of your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog), tag `main` and push the tag:
@@ -13,7 +13,7 @@ git push origin v0.1.8-demo
 ```
 
 ## Bump the Catalog Version
-From the root of your [live fork](/docs/deployment/live-repository-setup/#fork-the-live-repository), create a branch:
+From the root of your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository), create a branch:
 ```bash
 git checkout -b promote-demo
 ```
@@ -59,7 +59,7 @@ gh pr edit --add-label run-terratest
 gh run rerun --failed $(gh run list --workflow CI --branch promote-demo --limit 1 --json databaseId --jq '.[0].databaseId')
 ```
 
-Back in the **Actions** tab, `check-pr-labels` now passes and the `terratest` job starts. It deploys `staging`, runs the same tests you ran by hand in [Deploy to Staging](/docs/deployment/deploy-to-staging/#test-the-stack), and destroys it. See [Testing in CI/CD](/docs/ci-cd/testing/) for details. CI should take around 1 hour.
+Back in the **Actions** tab, `check-pr-labels` now passes and the `terratest` job starts. It deploys `staging`, runs the same tests you ran by hand in [Deploy to Staging](/docs/deployment/get-started/deploy-to-staging/#test-the-stack), and destroys it. See [Testing in CI/CD](/docs/ci-cd/testing/) for details. CI should take around 1 hour.
 
 When every job is green, your pull request is ready to merge.
 

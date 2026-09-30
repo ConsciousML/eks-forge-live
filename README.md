@@ -37,7 +37,7 @@ You're new to Terragrunt best practices? Read [Gruntwork's official production p
 
 ## Getting Started
 
-Follow the [deployment documentation](https://eks-forge.readthedocs.io/latest/docs/deployment/).
+Follow the [deployment documentation](https://eks-forge.readthedocs.io/latest/docs/deployment/get-started/).
 
 ### Deploy a Staging EKS Cluster
 Deploy the [EKS Cluster Stack](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/units/eks/README.md):

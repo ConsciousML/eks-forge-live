@@ -53,7 +53,7 @@ done
 ```
 
 ### Destroy the Live Bootstrap
-From the root of your live fork, destroy the [bootstrap pipelines](/docs/deployment/live-repository-setup/#bootstrap):
+From the root of your live fork, destroy the [bootstrap pipelines](/docs/deployment/get-started/live-repository-setup/#bootstrap):
 ```bash
 source .env
 cd live/bootstrap
