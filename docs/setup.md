@@ -38,6 +38,25 @@ mise trust
 mise install
 ```
 
+## Enable the Pre-commit Hooks
+Your fork comes with [prek](https://github.com/j178/prek) hooks, defined in [`.pre-commit-config.yaml`](../.pre-commit-config.yaml). They check the formatting of your `.hcl` files, so you'll catch issues before you push.
+
+`mise` already installed `prek`. Wire the hooks into git:
+```bash
+prek install
+```
+
+Run every hook against the whole repository:
+```bash
+prek run --all-files
+```
+You'll see the hook pass:
+```
+Terragrunt hcl fmt.......................................................Passed
+```
+
+From now on, the hooks run on the files you change each time you `git commit`.
+
 ## Live Configuration
 Live reads `.hcl` configuration files under [`live/`](../live/), like the catalog's `pipelines/`. They point to the catalog's [units](/docs/iac/#units), so `staging` and `prod` use the same components you deployed in [`dev`](/docs/iac/#dev).
 
