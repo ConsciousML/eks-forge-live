@@ -12,7 +12,7 @@ This guide shows you how to ship a change to [`staging`](/docs/iac/#staging) and
 ## Develop and Test in Dev
 
 Depending on what you changed, first follow:
-- **A unit in your catalog fork**: [Add a Unit](/docs/iac/add-a-unit/).
+- **A unit in your catalog fork**: [Add or Edit a Unit](/docs/iac/add-a-unit/) or [Remove a Unit](/docs/iac/remove-a-unit/).
 - **An app in your app of apps fork**: [Add, Edit, or Remove an App](/docs/applications/add-edit-or-remove-an-app/).
 - **Only the live configuration**: skip to [Create a Live Branch](#create-a-live-branch).
 
