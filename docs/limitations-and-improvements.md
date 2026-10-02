@@ -33,6 +33,24 @@ It's also slow. Each run builds a full EKS cluster before testing it, with a 90 
 
 Finally, the plan reviewed on the PR isn't always the one applied to `prod`. CD plans again when the PR merges, and the live repository doesn't require PR branches to be up to date with `main` before merging. If another PR merged after yours was reviewed, `prod` applies a diff nobody reviewed.
 
+```mermaid
+---
+title: A stale plan reaching prod
+---
+sequenceDiagram
+    autonumber
+    participant a as PR A
+    participant b as PR B
+    participant cd as CD
+    participant prod
+    a->>a: prod plan posted and reviewed
+    b->>cd: Merges
+    cd->>prod: Applies PR B
+    a->>cd: Merges, not rebased on PR B
+    cd->>prod: Plans again and applies
+    Note over a,prod: The diff applied differs from the plan reviewed in step 1
+```
+
 ## Signs You've Outgrown It
 
 With the catalog and live split, you control how many features ship at once: a single version bump in the live repository can carry several catalog changes. For a small team, shipping one or two bumps a day keeps these limitations acceptable. You've outgrown this design when upgrade breakages start reaching `prod`, when you need tests that run for longer than a CI job, or when waiting on `staging` runs becomes the bottleneck of your delivery.
