@@ -1,11 +1,11 @@
 # Test Terragrunt Stacks With Terratest
 
 ## Prerequisites 
-Perform the [quickstart](../README.md#getting-started) up to `Authenticate with AWS` (included).
+Perform the [quickstart](../../README.md#getting-started) up to `Authenticate with AWS` (included).
 
 ## What It Tests
 
-`TestStack` deploys the [staging EKS stack](../live/staging/eks/stack/terragrunt.stack.hcl) end-to-end and validates:
+`TestStack` deploys the [staging EKS stack](../../live/staging/eks/stack/terragrunt.stack.hcl) end-to-end and validates:
 
 - The stack applies via `terragrunt apply --all`
 - Kubeconfig points at the deployed cluster

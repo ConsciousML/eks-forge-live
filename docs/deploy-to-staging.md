@@ -88,7 +88,7 @@ export AWS_REGION=<region-code>
 go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
 ```
 
-The tests check that ArgoCD deployed every application and that your cluster's tools are reachable. See [Testing in CI/CD](/docs/ci-cd/testing/) for the full list. You should see:
+The tests check that your cluster's tools are reachable, and that ArgoCD and Grafana accept their admin password. See [What the Tests Check](/docs/ci-cd/add-an-infrastructure-test/#what-the-tests-check) for the full list. You should see:
 ```text
 ...
 --- PASS: TestStackExists (...)

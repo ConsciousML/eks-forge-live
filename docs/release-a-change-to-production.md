@@ -33,6 +33,7 @@ On this branch, follow every guide that fits your change. They all go into the s
 - **You merged a change in your catalog fork**: [Release an IaC Change](/docs/iac/release-an-iac-change/).
 - **You merged a change in your app of apps fork**: [Release an App Change](/docs/applications/release-an-app-change/).
 - **You're changing the live configuration**: [Edit the Live Configuration](/docs/iac/edit-live-configuration/).
+- **You want CI to test what you added**: [Add an Infrastructure Test](/docs/ci-cd/add-an-infrastructure-test/).
 
 ## Open a Pull Request
 

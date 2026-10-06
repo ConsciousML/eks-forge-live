@@ -59,7 +59,7 @@ gh pr edit --add-label run-terratest
 gh run rerun --failed $(gh run list --workflow CI --branch promote-demo --limit 1 --json databaseId --jq '.[0].databaseId')
 ```
 
-Back in the **Actions** tab, `check-pr-labels` now passes and the `terratest` job starts. It deploys `staging`, runs the same tests you ran by hand in [Deploy to Staging](/docs/deployment/get-started/deploy-to-staging/#test-the-stack), and destroys it. See [Testing in CI/CD](/docs/ci-cd/testing/) for details. CI should take around 1 hour.
+Back in the **Actions** tab, `check-pr-labels` now passes and the `terratest` job starts. It deploys `staging`, runs the same tests you ran by hand in [Deploy to Staging](/docs/deployment/get-started/deploy-to-staging/#test-the-stack), and destroys it. See [What the Tests Check](/docs/ci-cd/add-an-infrastructure-test/#what-the-tests-check) for details. CI should take around 1 hour.
 
 When every job is green, your pull request is ready to merge.
 
