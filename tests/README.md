@@ -186,23 +186,3 @@ The test destroys `staging` even when it fails, so `/tmp/test.log` is all that's
 </Tabs>
 
 Then return to [Open a Pull Request](/docs/deployment/release-a-change-to-production/#open-a-pull-request), and use the `run-terratest` label, so CI runs your check too.
-
-## What the Tests Check
-
-In CI, the `terratest` job runs `TestStack`, which:
-1. Applies the `staging` stack.
-2. Waits for ArgoCD's `app-of-apps` Application to be `Synced` and `Healthy`, which means every application is. It fails early when no application changes state for 10 minutes.
-3. Runs the endpoint checks below.
-4. Destroys the stack, even when a step failed.
-
-| Tool | Check |
-|------|-------|
-| ArgoCD | Answers on `/healthz`, and accepts its admin password |
-| Grafana | Answers on `/api/health`, and accepts its admin password |
-| podinfo | Answers `200` |
-| Prometheus | Answers `Healthy` on `/-/healthy` |
-| Alertmanager | Answers on `/api/v2/status` |
-| Hubble | Answers `200` |
-| Goldilocks | Answers `200` |
-
-`TestStackExists` only runs step 3. For what the tests can't catch, see [Limitations](/docs/ci-cd/limitations-and-improvements/#limitations).
