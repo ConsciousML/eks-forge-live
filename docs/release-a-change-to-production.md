@@ -82,7 +82,7 @@ When CI passes, merge:
 gh pr merge --merge
 ```
 
-Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes. To merge without deploying, add the `skip-cd` label to your pull request before merging:
+Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes. If CD fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/#terragrunt-apply-prod). To merge without deploying, add the `skip-cd` label to your pull request before merging:
 ```bash
 gh pr edit --add-label skip-cd
 ```
