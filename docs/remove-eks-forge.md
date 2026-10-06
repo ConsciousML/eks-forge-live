@@ -12,6 +12,8 @@ terragrunt stack generate
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
 
+If you added an environment with [Add a Staging Environment](/docs/iac/add-a-staging-environment/), destroy its stack too, as in [Destroy the Environment](/docs/iac/add-a-staging-environment/#destroy-the-environment).
+
 ### Destroy the Prod Stack
 From the root of your live fork, run:
 ```bash
@@ -60,4 +62,4 @@ cd live/bootstrap
 terragrunt run --all destroy --non-interactive
 ```
 
-Finally, in your domain registrar, remove the NS records of the `staging` and `prod` subdomains. Left in place, they point your subdomains at name servers you no longer control, which can let someone else take them over.
+Finally, in your domain registrar, remove the NS records of the `staging` and `prod` subdomains, and of any environment you added. Left in place, they point your subdomains at name servers you no longer control, which can let someone else take them over.

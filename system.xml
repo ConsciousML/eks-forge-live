@@ -57,6 +57,8 @@
           aligning against the catalog at the new tag
         - `docs/release-a-change-to-production.md`: shipping a change from `staging` to `prod`
         - `docs/limitations-and-improvements.md`: known CI/CD limitations
+        - `docs/add-a-staging-environment.md`: deploying a second `staging`-like environment
+          next to `staging`
         - `docs/remove-eks-forge.md`: tearing down the live side of EKS Forge
         - `tests/README.md`: what Terratest covers and how to extend it
 
