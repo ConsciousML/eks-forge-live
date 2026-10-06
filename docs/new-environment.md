@@ -2,7 +2,7 @@
 
 Changes span both the catalog and live repos. Three steps are hard prerequisites for the final EKS deploy: the Tailscale ACL must include the new VPC CIDR before the connector can route traffic, and the public Route53 hosted zone must exist before ACM can validate TLS certificates.
 
-> **Deploying a dev environment?** Those live in the catalog repo. Follow the [catalog repo new environment guide](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/new-environment.md) instead.
+> **Deploying a dev environment?** Those live in the catalog repo. Follow [Add a Dev Environment](https://eks-forge.readthedocs.io/latest/docs/iac/add-a-dev-environment/) instead.
 
 The example below adds a `pre-staging` environment.
 
