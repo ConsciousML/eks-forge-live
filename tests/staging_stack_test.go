@@ -20,8 +20,7 @@ import (
 // to become reachable. waitForAppOfApps already confirms every app is healthy, so this
 // budget only covers DNS propagation and ALB/target-group lag, not app startup.
 const (
-	// TEMP: bumped to 30min while debugging DNS propagation lag, revert to 30 once fixed.
-	endpointRetries = 180
+	endpointRetries = 30
 	endpointSleep   = 10 * time.Second
 )
 
