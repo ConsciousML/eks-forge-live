@@ -79,6 +79,8 @@ Never open it as a draft, CI fails on draft PRs.
 
 With `run-terratest`, CI takes around 1 hour. Watch it with `gh pr checks <N> --watch`.
 
+With `skip-cd`, stop here. The merge applies nothing to `prod`, so there is no plan to read.
+
 Each push posts a new **Production Plan Available** comment. Read the latest one and check its
 **Commit** matches `git rev-parse --short HEAD`. Then download the plan from that run:
 ```bash
