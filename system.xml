@@ -50,6 +50,10 @@
     </bootstrap>
 
     <documentation_map>
+        The guides under `docs/`, `tests/README.md`, and the bootstrap pipeline READMEs are the
+        sources of the EKS Forge site pages. The `eks-forge` agent writes them. Read them, and fix
+        only a fact your change made wrong.
+
         - `docs/setup.md`, `docs/deploy-to-staging.md`, `docs/promote-to-production.md`: setting
           up this repo, deploying a `staging` EKS cluster, and promoting it to `prod`
         - `docs/edit-live-configuration.md`: changing a live stack's configuration

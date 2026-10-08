@@ -58,7 +58,7 @@ sudo dscacheutil -flushcache && sudo killall -HUP mDNSResponder
 ```
 
 ## Can't Destroy `prod` Cluster
-If the production cluster is created by [CD](../.github/workflows/cd.yaml), our local IAM user is not added by default as a cluster administrator.
+If the production cluster is created by [CD](../../.github/workflows/cd.yaml), our local IAM user is not added by default as a cluster administrator.
 
 A temporary workaround is to assume the CI/CD role to be able to destroy the cluster.
 

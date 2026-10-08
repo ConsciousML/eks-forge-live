@@ -2,7 +2,7 @@
 
 ## Overview
 
-The [CI](../.github/workflows/ci.yaml) and [CD](../.github/workflows/cd.yaml) workflows automate infrastructure validation, testing, and deployment on every pull request and merge.
+The [CI](../../.github/workflows/ci.yaml) and [CD](../../.github/workflows/cd.yaml) workflows automate infrastructure validation, testing, and deployment on every pull request and merge.
 
 ## Features
 
@@ -16,9 +16,9 @@ The [CI](../.github/workflows/ci.yaml) and [CD](../.github/workflows/cd.yaml) wo
 For details on each step, see [How CI/CD Works](#how-cicd-works).
 
 ## Prerequisites
-Perform the [quickstart](../../../README.md#getting-started) up to `Authenticate with AWS` (included).
+Perform the [quickstart](../../README.md#getting-started) up to `Authenticate with AWS` (included).
 
-Then, run the [bootstrap pipelines](../README.md#run-the-bootstrap-pipelines) once per repository.
+Then, run the [bootstrap pipelines](../../README.md#run-the-bootstrap-pipelines) once per repository.
 
 ## Using the CI/CD (Development Workflow)
 
@@ -85,7 +85,7 @@ After validate & plan, CI checks that the PR has exactly one of two labels befor
 - `skip-terratest`: infrastructure tests will be skipped
 
 #### 5. Terratest
-See the [Terratest guide](../tests/README.md) for details on what is tested and how to extend it.
+See the [Terratest guide](../../tests/README.md) for details on what is tested and how to extend it.
 
 Runs only when the `run-terratest` label is present:
 - Deploys the AWS infrastructure to the staging environment
@@ -116,4 +116,4 @@ Runs automatically when a PR is **merged to `main`** and is composed of three jo
 
 The bootstrap automatically registers the IAM identity used to run it as a cluster admin. It stores that ARN as the `EKS_LOCAL_ADMIN_ARN` GitHub Actions secret, and CD injects it on every apply so the access entry is always in sync.
 
-If a second developer needs local prod access, add them as a separate entry in the [`access_entries` block](../live/prod/eks/stack/terragrunt.stack.hcl) of the cluster unit.
+If a second developer needs local prod access, add them as a separate entry in the [`access_entries` block](../../live/prod/eks/stack/terragrunt.stack.hcl) of the cluster unit.
