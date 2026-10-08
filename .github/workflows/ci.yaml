@@ -224,6 +224,11 @@ jobs:
     needs: check-pr-labels
     if: needs.check-pr-labels.outputs.should_run == 'true'
     runs-on: ubuntu-24.04
+    # Every PR deploys to the same staging. Every pending run waits.
+    concurrency:
+      group: staging-terratest
+      cancel-in-progress: false
+      queue: max
     outputs:
       client_id: ${{ steps.ts-oauth-create.outputs.client_id }}
 

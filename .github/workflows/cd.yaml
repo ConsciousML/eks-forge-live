@@ -7,8 +7,10 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: cd-${{ github.head_ref || github.run_id }}
+  group: cd-prod
   cancel-in-progress: false
+  # Every pending run waits. The default keeps only the newest.
+  queue: max
 
 permissions:
   contents: read
