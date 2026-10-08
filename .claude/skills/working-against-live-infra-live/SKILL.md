@@ -27,13 +27,10 @@ touch credentials you shouldn't handle.
 
 ## Prod
 
-Never run `apply` or `destroy` on `prod`. CD is the only path, it applies on merge to `main`.
-`.claude/hooks/guard-prod.sh` blocks both.
+CD is the normal path to `prod`, it applies on merge to `main`. Run `apply` or `destroy` on `prod`
+only when the user asks for it.
 
 `plan`, `output`, and read-only `aws` calls are fine.
-
-When `prod` needs a manual command (a removed unit to destroy, a stuck state), give the user the
-exact command and its directory.
 
 ## Staging
 
