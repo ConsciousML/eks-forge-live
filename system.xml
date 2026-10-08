@@ -66,13 +66,14 @@
         - `docs/remove-eks-forge.md`: tearing down the live side of EKS Forge
         - `tests/README.md`: what Terratest covers and how to extend it
 
-        Catalog docs:
-        - `pipelines/bootstrap/README.md`: source of truth for &lt;bootstrap&gt;'s stack
-          inventory
+        Site pages sourced outside this repo, under https://eks-forge.readthedocs.io/latest:
+        - `/docs/quickstart/bootstrap/`: source of truth for &lt;bootstrap&gt;'s stack inventory
+        - `/docs/reference/environment_variable/`: reference for env vars set in `.env`,
+          cross-check against `docs/release-an-iac-change.md`'s environment variable diff step
+
+        Catalog file with no site page:
         - `units/eks/README.md`: source of truth for &lt;eks_stack&gt;'s unit inventory at
           `version_catalog`
-        - `docs/environment-variables.md`: reference for env vars set in `.env`, cross-check
-          against `docs/release-an-iac-change.md`'s environment variable diff step
     </documentation_map>
 
     <commits>
