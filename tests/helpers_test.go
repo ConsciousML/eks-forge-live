@@ -5,12 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/terragrunt"
 	"github.com/stretchr/testify/require"
 )
 
@@ -86,4 +89,25 @@ func postLoginJSON(t *testing.T, url string, reqBody any, out any) {
 
 	require.Equal(t, http.StatusOK, resp.StatusCode, "[ERROR] login to %s returned unexpected status: got %d, want 200", url, resp.StatusCode)
 	require.NoError(t, json.NewDecoder(resp.Body).Decode(out), "[ERROR] failed to decode login response from %s", url)
+}
+
+// requireRegion returns AWS_REGION and fails the test when it is unset.
+func requireRegion(t *testing.T) string {
+	t.Helper()
+
+	region := os.Getenv("AWS_REGION")
+	require.NotEmpty(t, region, "[ERROR] AWS_REGION must be set")
+	return region
+}
+
+// stackOutputs returns every unit output of the stack in stackDir.
+func stackOutputs(t *testing.T, ctx context.Context, stackDir string) map[string]any {
+	t.Helper()
+
+	silentOptions := &terragrunt.Options{
+		TerragruntDir:  stackDir,
+		TerragruntArgs: []string{"--log-level", "error"},
+		Logger:         logger.Discard,
+	}
+	return terragrunt.StackOutputAllContext(t, ctx, silentOptions)
 }

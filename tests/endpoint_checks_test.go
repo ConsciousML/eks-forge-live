@@ -3,17 +3,12 @@ package tests
 import (
 	"context"
 	"net/http"
-	"os"
-	"os/exec"
 	"strings"
 	"testing"
 	"time"
 
 	http_helper "github.com/gruntwork-io/terratest/modules/http-helper"
-	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/terragrunt"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 // endpointRetries and endpointSleep bound how long each endpoint check waits for its tool
@@ -55,93 +50,25 @@ var endpointChecks = []endpointCheck{
 	{name: "goldilocks", path: "/", validate: statusOK},
 }
 
-// TestStack deploys the staging EKS stack and validates every tool in endpointChecks.
-func TestStack(t *testing.T) {
-	t.Parallel()
+// assertEndpoints runs every check in endpointChecks against allOutputs.
+func assertEndpoints(t *testing.T, ctx context.Context, allOutputs map[string]any, region string) {
+	t.Helper()
 
-	ctx := t.Context()
+	for _, ep := range endpointChecks {
+		host := unitOutput(t, allOutputs, "domain_name_"+ep.name, "value")
 
-	region := os.Getenv("AWS_REGION")
-	require.NotEmpty(t, region, "[ERROR] AWS_REGION must be set")
+		if ep.secretUnit == "" {
+			url := "https://" + host + ep.path
+			t.Logf("[INFO] polling %s until %s is ready", url, ep.name)
+			pollUntilReady(t, url, endpointRetries, endpointSleep, ep.validate)
+			t.Logf("[INFO] %s is healthy", ep.name)
+			continue
+		}
 
-	// Tailscale CLI is needed to flush DNS cache after Terragrunt apply
-	_, err := exec.LookPath("tailscale")
-	require.NoError(t, err, "[ERROR] tailscale CLI not found in PATH — install it before running this test")
-
-	// Disconnect before apply to avoid racing the in-cluster connector's split-DNS route (see
-	// ci.yaml). Reconnected once the stack and connector are up (reconnectTailscale below).
-	out, err := exec.Command("tailscale", "down").CombinedOutput()
-	require.NoError(t, err, "[ERROR] tailscale down: %s", strings.TrimSpace(string(out)))
-
-	stackDir := "../live/staging/eks/stack"
-
-	options := &terragrunt.Options{
-		TerragruntDir:  stackDir,
-		TerragruntArgs: []string{"--log-level", "error"},
+		secretName := unitOutput(t, allOutputs, ep.secretUnit, ep.secretKey)
+		password := fetchAWSSecret(t, ctx, region, secretName)
+		ep.login(t, host, password)
 	}
-
-	defer terragrunt.DestroyAllContext(t, ctx, options)
-
-	// Runs before destroy (LIFO). Avoids "Required plugins are not installed"
-	// (gruntwork-io/terragrunt#1960) by forcing a fresh stack generate before destroy.
-	defer terragrunt.StackCleanContext(t, ctx, options)
-
-	// Runs before both defers above (LIFO) no matter what fails afterward. During destroy
-	// the tailscale operator is torn down partway through and stops serving the tunnel, so
-	// destroy must resolve the EKS API publicly rather than through the now-dead private route.
-	defer func() {
-		out, err := exec.Command("tailscale", "down").CombinedOutput()
-		assert.NoError(t, err, "[ERROR] tailscale down before destroy: %s", strings.TrimSpace(string(out)))
-	}()
-
-	terragrunt.ApplyAllContext(t, ctx, options)
-
-	// Fetched once and reused below: terragrunt output --all is expensive to re-run.
-	silentOptions := &terragrunt.Options{
-		TerragruntDir:  stackDir,
-		TerragruntArgs: []string{"--log-level", "error"},
-		Logger:         logger.Discard,
-	}
-	allOutputs := terragrunt.StackOutputAllContext(t, ctx, silentOptions)
-
-	updateKubeconfig(t, allOutputs, region)
-
-	waitForAppOfApps(t)
-
-	reconnectTailscale(t)
-
-	assertStack(t, ctx, allOutputs, region)
-}
-
-// TestStackExists runs only the assertion phase against an already-deployed
-// staging stack. Use this when the infrastructure is already up and you want to
-// iterate on the Go logic without triggering an apply or destroy.
-//
-// Usage:
-//
-//	go test -v -run TestStackExists -timeout 10m
-func TestStackExists(t *testing.T) {
-	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		t.Skip("skipped in CI — run locally against an already-deployed stack")
-	}
-
-	t.Parallel()
-
-	ctx := t.Context()
-
-	stackDir := "../live/staging/eks/stack"
-
-	region := os.Getenv("AWS_REGION")
-	require.NotEmpty(t, region, "[ERROR] AWS_REGION must be set")
-
-	silentOptions := &terragrunt.Options{
-		TerragruntDir:  stackDir,
-		TerragruntArgs: []string{"--log-level", "error"},
-		Logger:         logger.Discard,
-	}
-	allOutputs := terragrunt.StackOutputAllContext(t, ctx, silentOptions)
-
-	assertStack(t, ctx, allOutputs, region)
 }
 
 // pollUntilReady polls url until validate passes, sleeping sleepBetweenRetries between attempts
@@ -164,27 +91,6 @@ func pollUntilReady(t *testing.T, url string, retries int, sleepBetweenRetries t
 		}
 		return false, false
 	})
-}
-
-// assertStack runs every check in endpointChecks against allOutputs.
-func assertStack(t *testing.T, ctx context.Context, allOutputs map[string]any, region string) {
-	t.Helper()
-
-	for _, ep := range endpointChecks {
-		host := unitOutput(t, allOutputs, "domain_name_"+ep.name, "value")
-
-		if ep.secretUnit == "" {
-			url := "https://" + host + ep.path
-			t.Logf("[INFO] polling %s until %s is ready", url, ep.name)
-			pollUntilReady(t, url, endpointRetries, endpointSleep, ep.validate)
-			t.Logf("[INFO] %s is healthy", ep.name)
-			continue
-		}
-
-		secretName := unitOutput(t, allOutputs, ep.secretUnit, ep.secretKey)
-		password := fetchAWSSecret(t, ctx, region, secretName)
-		ep.login(t, host, password)
-	}
 }
 
 // testArgoCDLogin asserts that ArgoCD is healthy and that a login request with
