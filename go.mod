@@ -1,4 +1,4 @@
-module github.com/ConsciousML/terragrunt-template-live-eks
+module github.com/ConsciousML/eks-forge-live
 
 go 1.26
 

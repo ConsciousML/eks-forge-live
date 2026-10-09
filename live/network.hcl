@@ -1,6 +1,6 @@
 locals {
   # Must stay in sync with vpc_cidrs in the catalog repo's pipelines/network.hcl:
-  # https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/network.hcl
+  # https://github.com/ConsciousML/eks-forge-catalog/blob/main/pipelines/network.hcl
   vpc_cidrs = {
     prod    = "10.0.0.0/16"
     staging = "10.1.0.0/16"
@@ -28,7 +28,7 @@ locals {
   }
 
   # Consumer-side keys matching the vpcEndpointCidrs shape each CiliumNetworkPolicy
-  # consumer expects in argocd-app-of-apps-template.
+  # consumer expects in eks-forge-app-of-apps.
   app_param_key_map = {
     secretsmanager       = "secretsmanager"
     route53              = "route53"

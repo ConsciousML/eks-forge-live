@@ -25,7 +25,7 @@ git push origin <new-tag>
 Your current tag is the `version_catalog` at the top of [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl):
 ```hcl
 locals {
-  version_catalog = "v0.1.9.1"
+  version_catalog = "v0.1.9.2"
   ...
 }
 ```
@@ -59,7 +59,7 @@ Skip tools that only exist in the catalog's `mise.toml`, such as `tflint` and `t
 
 If the catalog added a variable to `.env.example`, check what uses it in the [Environment Variables](/docs/reference/environment_variable/) reference. Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
 ```bash
-# See https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/environment-variables.md#slack_bot_token
+# See https://github.com/ConsciousML/eks-forge-catalog/blob/main/docs/environment-variables.md#slack_bot_token
 export SLACK_BOT_TOKEN=
 ```
 
@@ -71,7 +71,7 @@ env:
 
 ## Align the CI Setup
 
-The catalog's [`ci.yaml`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/.github/workflows/ci.yaml) runs checks specific to the catalog, such as lock files and module docs, so don't port its jobs. What both repos share is the setup action that installs the tools and authenticates to AWS. If the catalog changed it, port the change to your live [`.github/actions/setup/action.yml`](../.github/actions/setup/action.yml), keeping live's own settings, such as the longer `role-duration-seconds` Terratest needs.
+The catalog's [`ci.yaml`](https://github.com/ConsciousML/eks-forge-catalog/blob/main/.github/workflows/ci.yaml) runs checks specific to the catalog, such as lock files and module docs, so don't port its jobs. What both repos share is the setup action that installs the tools and authenticates to AWS. If the catalog changed it, port the change to your live [`.github/actions/setup/action.yml`](../.github/actions/setup/action.yml), keeping live's own settings, such as the longer `role-duration-seconds` Terratest needs.
 
 ## Update the Bootstrap Pipelines
 
@@ -117,7 +117,7 @@ locals {
 }
 ```
 
-Then apply the diff of [`pipelines/dev/eks/stack/terragrunt.stack.hcl`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/dev/eks/stack/terragrunt.stack.hcl) to both stack files, following the sections below for each added, removed, or changed unit.
+Then apply the diff of [`pipelines/dev/eks/stack/terragrunt.stack.hcl`](https://github.com/ConsciousML/eks-forge-catalog/blob/main/pipelines/dev/eks/stack/terragrunt.stack.hcl) to both stack files, following the sections below for each added, removed, or changed unit.
 
 Don't adopt a value marked `# DEV:`, it only applies to [`dev`](/docs/iac/#dev). Keep live's own lines, marked `# STAGING:` or `# PROD:`, instead. For example, `dev` disables control plane logging, while `prod` keeps it:
 ```hcl

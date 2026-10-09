@@ -20,7 +20,7 @@ The commands of this guide read it, so run them all from the same shell.
 
 ## Reserve a VPC CIDR
 
-In your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog), add your environment to `vpc_cidrs` in [`pipelines/network.hcl`](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/pipelines/network.hcl), with the `/16` block that follows the highest one. For example, for `staging-2`:
+In your [catalog fork](/docs/quickstart/installation/#fork-the-eks-forge-catalog), add your environment to `vpc_cidrs` in [`pipelines/network.hcl`](https://github.com/ConsciousML/eks-forge-catalog/blob/main/pipelines/network.hcl), with the `/16` block that follows the highest one. For example, for `staging-2`:
 ```hcl
 vpc_cidrs = {
   ...

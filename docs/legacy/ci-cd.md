@@ -29,7 +29,7 @@ Then, run the [bootstrap pipelines](../../README.md#run-the-bootstrap-pipelines)
    git checkout -b feature/update-instance-size
    ```
 
-2. Make changes into the Terraform code, units, and stacks in the catalog repository by following its [development workflow](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/development.md).
+2. Make changes into the Terraform code, units, and stacks in the catalog repository by following its [development workflow](https://github.com/ConsciousML/eks-forge-catalog/blob/main/docs/development.md).
 
 3. Next, bump the catalog version and align the live stack. For example, in `live/staging/eks/stack/terragrunt.stack.hcl`:
 ```hcl

@@ -34,7 +34,7 @@ go get github.com/aws/aws-sdk-go-v2/service/secretsmanager@v1.41.7
 go mod tidy
 ```
 
-Follow the [environment variables guide](https://github.com/ConsciousML/terragrunt-template-catalog-eks/blob/main/docs/environment-variables.md), then run:
+Follow the [environment variables guide](https://github.com/ConsciousML/eks-forge-catalog/blob/main/docs/environment-variables.md), then run:
 
 ```bash
 source .env

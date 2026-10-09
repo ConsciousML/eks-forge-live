@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 # Live Repository Setup
 
-In this tutorial, you'll fork the [live repository](https://github.com/ConsciousML/terragrunt-template-live-eks), install its CLI tools, and point it at your catalog fork.
+In this tutorial, you'll fork the [live repository](https://github.com/ConsciousML/eks-forge-live), install its CLI tools, and point it at your catalog fork.
 
 ## Prerequisites
 Complete the [Quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
@@ -24,7 +24,7 @@ export LIVE_REPO_NAME=<your-live-repo-name>
 
 Clone the live repository and push it to your repository:
 ```bash
-git clone https://github.com/ConsciousML/terragrunt-template-live-eks.git $LIVE_REPO_NAME
+git clone https://github.com/ConsciousML/eks-forge-live.git $LIVE_REPO_NAME
 cd $LIVE_REPO_NAME
 git remote set-url origin git@github.com:$GITHUB_OWNER/$LIVE_REPO_NAME.git
 git push origin main
