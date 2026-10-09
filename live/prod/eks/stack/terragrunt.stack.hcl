@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.1.9.1"
+  version_catalog     = "v0.1.9.2"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # PROD: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.1.4"
+  app_of_apps_target_revision = "v0.1.5"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -207,7 +207,7 @@ unit "cluster" {
     }
 
     # PROD: dev disables control plane logging entirely to cut costs, prod enables "api", see
-    # https://github.com/ConsciousML/terragrunt-template-live-eks/issues/40
+    # https://github.com/ConsciousML/eks-forge-live/issues/40
     enabled_log_types = ["api"]
     # Infrequent Access cuts cost ~50% but doesn't support all Standard class features:
     # https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html
@@ -546,7 +546,7 @@ unit "argocd" {
           requests = { cpu = "1388m", memory = "1645M" }
           limits   = { memory = "1645M" }
         }
-        # Outranks the DaemonSets' daemonset-critical (argocd-app-of-apps-template's
+        # Outranks the DaemonSets' daemonset-critical (eks-forge-app-of-apps's
         # priority-classes/), so it can no longer be preempted to make room for one of them
         # on a full node.
         priorityClassName = "system-node-critical"
