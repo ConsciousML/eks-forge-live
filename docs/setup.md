@@ -7,7 +7,7 @@ In this tutorial, you'll fork the [live repository](https://github.com/Conscious
 Complete the [Quickstart](/docs/quickstart/) first. Live reuses its [prerequisites](/docs/quickstart/prerequisites/), bootstrap resources, and catalog fork.
 
 ## Fork the Live Repository
-The live repository deploys the stacks of the [catalog](https://github.com/ConsciousML/terragrunt-template-catalog-eks) in the `staging` and `prod` environments.
+The live repository deploys the stacks of the [catalog](https://github.com/ConsciousML/eks-forge-catalog) in the `staging` and `prod` environments.
 Like the catalog, it's meant to be forked and extended.
 
 Follow the same steps as in [Fork the EKS Forge Catalog](/docs/quickstart/installation/#fork-the-eks-forge-catalog). First, create an empty repository from [GitHub's new repository page](https://github.com/new), private or public. Leave the README, `.gitignore`, and license options unset.
