@@ -7,7 +7,7 @@ import TabItem from '@theme/TabItem';
 
 An [endpoint check](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#what-a-passing-check-proves) polls your tool's hostname until it answers. It's one of the guides of [Update the Live Fork](/docs/deployment/release-a-change-to-production/#update-the-live-fork), and assumes you're on your live branch, with your tool's `domain_name_<tool>` unit in both stack files. If your tool has no such unit, follow [Add a Domain Name Unit](/docs/iac/add-a-domain-name-unit/) first.
 
-Add an entry to `endpointChecks` in [`tests/staging_stack_test.go`](staging_stack_test.go), with `name` set to what follows `domain_name_` in the name of your unit's block in the stack files (e.g. `goldilocks` for `unit "domain_name_goldilocks"`). Pick the tab that fits your tool:
+Add an entry to `endpointChecks` in [`tests/endpoint_checks_test.go`](endpoint_checks_test.go), with `name` set to what follows `domain_name_` in the name of your unit's block in the stack files (e.g. `goldilocks` for `unit "domain_name_goldilocks"`). Pick the tab that fits your tool:
 - **Reachability**: the tool answers on its hostname.
 - **Login**: the tool also accepts its admin password.
 
@@ -95,7 +95,7 @@ func assertNodePools(t *testing.T) {
 
 Start every failure message with `[ERROR]`. It's what you search the log for when the test fails in CI (see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/#terratest)).
 
-Then call your function from `assertStack`, in [`tests/staging_stack_test.go`](staging_stack_test.go), so that both the CI run and your own run on `staging` execute it (see [Two Tests, One Set of Checks](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#two-tests-one-set-of-checks)):
+Then call your function from `assertStack`, in [`tests/assert_stack_test.go`](assert_stack_test.go), so that both the CI run and your own run on `staging` execute it (see [Two Tests, One Set of Checks](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#two-tests-one-set-of-checks)):
 ```go
 func assertStack(t *testing.T, ctx context.Context, allOutputs map[string]any, region string) {
 	t.Helper()

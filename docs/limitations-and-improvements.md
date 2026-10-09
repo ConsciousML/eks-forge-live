@@ -9,7 +9,7 @@ For the full CI/CD flow, read the [CI/CD](/docs/ci-cd/) overview.
 The core principle behind this design is that only one process writes to an environment at a time. When two runs write to the same environment, one run's plan goes stale as soon as the other applies, and the state stops matching what's on `main`.
 
 Each environment follows it in its own way:
-- `dev` is ephemeral, feature-scoped, and lives in the [catalog repository](https://github.com/ConsciousML/terragrunt-template-catalog-eks).
+- `dev` is ephemeral, feature-scoped, and lives in the [catalog repository](https://github.com/ConsciousML/eks-forge-catalog).
 - In the live repository, a single PR bumps `staging` and `prod` together. [Terratest](https://terratest.gruntwork.io/) tests the change on the shared `staging` environment, and runs are queued, so only one PR writes to it at a time.
 - `prod` is written only by CD, after the prod plan is posted to the PR for review. Its applies are queued too.
 

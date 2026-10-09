@@ -155,6 +155,16 @@ jobs:
           terragrunt stack generate
           terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 
+      # A failure here leaves prod applied. Nothing is rolled back.
+      - name: Run Terratest on prod
+        env:
+          TAILSCALE_IDENTITY_TOKEN: ""
+          TAILSCALE_OAUTH_CLIENT_ID: ${{ steps.ts-oauth-create.outputs.client_id }}
+          TAILSCALE_OAUTH_CLIENT_SECRET: ${{ steps.ts-oauth-create.outputs.client_secret }}
+          EKS_LOCAL_ADMIN_ARN: ${{ secrets.EKS_LOCAL_ADMIN_ARN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        run: go test -v -run '^TestProdStack$' ./tests/... -timeout 45m
+
   revoke-oauth:
     # Revokes the temporary Tailscale OAuth client created during apply.
     # Runs even when apply fails to ensure no credentials are left behind.

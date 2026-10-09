@@ -5,11 +5,11 @@
 
     <architecture>
         Three repos:
-        1. `terragrunt-template-catalog-eks` (the catalog): Terraform modules, Terragrunt units,
+        1. `eks-forge-catalog` (the catalog): Terraform modules, Terragrunt units,
           and stack configs
         2. This repo (live): live deployments (`dev`, `staging`, `prod`) that instantiate this
           catalog's stacks
-        3. `argocd-app-of-apps-template`: GitOps repo owning the Kubernetes-side Helm charts and
+        3. `eks-forge-app-of-apps`: GitOps repo owning the Kubernetes-side Helm charts and
           manifests, deployed through ArgoCD
 
         The repo follows this structure: live/{environment}/{stack}/terragrunt.stack.hcl

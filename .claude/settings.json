@@ -2,7 +2,7 @@
   "permissions": {
     "defaultMode": "default",
     "additionalDirectories": [
-      "../argocd-app-of-apps-template",
+      "../eks-forge-app-of-apps",
       "/tmp"
     ],
     "allow": [
@@ -178,10 +178,10 @@
       "Read(.git/**)",
       "Edit(.git/**)",
 
-      "Read(../argocd-app-of-apps-template/.git/**)",
-      "Edit(../argocd-app-of-apps-template/.git/**)",
+      "Read(../eks-forge-app-of-apps/.git/**)",
+      "Edit(../eks-forge-app-of-apps/.git/**)",
 
-      "Edit(../argocd-app-of-apps-template/.claude/**)",
+      "Edit(../eks-forge-app-of-apps/.claude/**)",
       "Edit(CLAUDE.md)",
       "Edit(.claude/settings.json)",
       "Edit(.claude/settings.local.json)",
