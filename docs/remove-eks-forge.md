@@ -15,14 +15,44 @@ terragrunt run --all destroy --non-interactive --no-stack-generate
 If you added an environment with [Add a Staging Environment](/docs/iac/add-a-staging-environment/), destroy its stack too, as in [Destroy the Environment](/docs/iac/add-a-staging-environment/#destroy-the-environment).
 
 ### Destroy the Prod Stack
-From the root of your live fork, run:
+`prod` sets `force_destroy = false` on its Loki buckets, so an accidental destroy doesn't lose your logs. As a result, the destroy fails while these buckets hold objects.
+
+In [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl), set `force_destroy = true` in the `loki_s3_chunks` and `loki_s3_ruler` blocks.
+
+Then, from the root of your live fork, apply the two bucket units so the buckets take the new value:
 ```bash
 source .env
 cd live/prod/eks/stack
 terragrunt stack clean
 terragrunt stack generate
+(cd .terragrunt-stack/eks/addons/loki/s3/chunks && terragrunt apply -auto-approve)
+(cd .terragrunt-stack/eks/addons/loki/s3/ruler && terragrunt apply -auto-approve)
+```
+
+Finally, destroy the stack from the same directory:
+```bash
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
+
+If you plan to deploy EKS Forge again, restore the file from the root of your live fork, so `prod` protects its logs again:
+```bash
+git checkout live/prod/eks/stack/terragrunt.stack.hcl
+```
+
+{/* MIGRATE: to troubleshoot */}
+#### The Destroy Fails on a Loki Bucket
+If the destroy ends with an error on the `eks/addons/loki/s3/chunks` unit, its bucket still held objects with `force_destroy = false`. Empty the bucket:
+```bash
+aws s3 rm "s3://prod-loki-chunks-$(aws sts get-caller-identity --query Account --output text)-$AWS_REGION" --recursive
+```
+
+Then destroy the unit again, from `live/prod/eks/stack`:
+```bash
+cd .terragrunt-stack/eks/addons/loki/s3/chunks
+terragrunt destroy
+```
+
+If the error is on the `eks/addons/loki/s3/ruler` unit, do the same with the `prod-loki-ruler` bucket and the unit's directory.
 
 ### Delete Leftover EBS Volumes
 `prod` retains the volumes of Prometheus, Alertmanager, and Loki when their pods are deleted, so an accidental deletion doesn't lose your metrics and logs. As a result, these volumes outlive the `prod` stack and keep being billed.
