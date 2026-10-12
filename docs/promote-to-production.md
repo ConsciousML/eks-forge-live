@@ -69,7 +69,9 @@ Merge your pull request:
 gh pr merge --merge --subject "bump(catalog): to v0.1.8-demo"
 ```
 
-Merging to `main` triggers CD. In the **Actions** tab, you should see a `CD` run applying the `prod` stack. The deployment should take around 30 minutes.
+Merging to `main` triggers CD. In the **Actions** tab, you should see an `Apply on Production Environment` run applying the `prod` stack. The deployment should take around 30 minutes.
+
+Once the apply is done, notice the `Run Terratest on prod` step: CD runs the same tests against `prod`, without destroying it. It should take around 10 more minutes.
 
 ## Check the Production Cluster
 When CD is done, connect `kubectl` to your `prod` EKS cluster (replace `<region-code>` with the region you set in [`live/prod/region.hcl`](../live/prod/region.hcl)):

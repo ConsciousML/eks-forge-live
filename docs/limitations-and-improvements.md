@@ -25,7 +25,7 @@ It trades coverage for simplicity: it catches most breakages, at the lowest cost
 
 ## Limitations
 
-The main gap is that `staging` only ever tests a fresh create. `prod` doesn't get rebuilt on each change: it gets a diff applied to its existing state. Resource replacements, addon upgrades, and other changes that only show up on existing infrastructure reach `prod` without ever being reproduced on `staging`.
+The main gap is that `staging` only ever tests a fresh create. `prod` doesn't get rebuilt on each change: it gets a diff applied to its existing state. Resource replacements, addon upgrades, and other changes that only show up on existing infrastructure reach `prod` without ever being reproduced on `staging`. CD tests `prod` after each apply, so such a breakage is caught, but only once it's in `prod`.
 
 Since `staging` is destroyed right after the tests, there is also no room for soak tests. Anything that needs to run for hours or days has no environment to run against before `prod`.
 

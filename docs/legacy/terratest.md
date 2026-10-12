@@ -41,7 +41,7 @@ source .env
 ```
 
 Deploy and test the full stack (apply + assert + destroy). A run can take a while end to end (see
-the wait budgets in `app_of_apps_wait_test.go` and `staging_stack_test.go`), so pipe through `tee`
+the wait budgets in `app_of_apps_wait_test.go` and `endpoint_checks_test.go`), so pipe through `tee`
 to keep a log file for debugging a stall or failure:
 ```bash
 go test -v -run '^TestStack$' ./tests/... -timeout 120m 2>&1 | tee /tmp/test.log
@@ -55,7 +55,7 @@ go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
 ## Tailscale Quirks
 
 `TestStack` shells out to the `tailscale` CLI directly (see `tailscale_reconnect_test.go` and the
-top of `staging_stack_test.go`), and the ordering is easy to get wrong.
+top of `stack_test.go`), and the ordering is easy to get wrong.
 
 Tailscale must be down during both apply and destroy, not just one of them. Down before apply
 avoids racing the in-cluster connector's split-DNS route. Down before destroy is required because
@@ -77,7 +77,7 @@ your user is already the operator (or root), so this is a no-op.
 
 ## Write a Test
 
-Copy `tests/staging_stack_test.go` in the `tests` directory. Use the suffix `*_test.go`.
+Copy `tests/stack_test.go` in the `tests` directory. Use the suffix `*_test.go`.
 
 Next, change the stack directory to the path of the stack you want to test:
 ```go

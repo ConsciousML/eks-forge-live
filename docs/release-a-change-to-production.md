@@ -83,12 +83,14 @@ When CI passes, merge:
 gh pr merge --merge
 ```
 
-Merging to `main` triggers CD, which applies your change to `prod`, in around 30 minutes. If CD fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/#terragrunt-apply-prod). To merge without deploying, add the `skip-cd` label to your pull request before merging:
+Merging to `main` triggers CD, which applies your change to `prod`, then runs the infrastructure tests' checks on it, in around 40 minutes. If CD fails, see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/#terragrunt-apply-prod). To merge without deploying, add the `skip-cd` label to your pull request before merging:
 ```bash
 gh pr edit --add-label skip-cd
 ```
 
 ## Check Prod
+
+A green CD run means `prod`'s applications are `Synced` and `Healthy`, and its tools answer on their hostnames (see [What a Passing Check Proves](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#what-a-passing-check-proves)). It doesn't tell you that your change does what you made it for, so check that yourself.
 
 When CD is done, if you followed [Disable the Public EKS Endpoint](/docs/security/improvements/#disable-the-public-eks-endpoint), connect to Tailscale first. Then connect `kubectl` to your `prod` cluster, replacing `<region-code>` with the region set in [`live/prod/region.hcl`](../live/prod/region.hcl):
 ```bash
@@ -100,7 +102,7 @@ Check that ArgoCD synced the Kubernetes resources:
 kubectl get app -n argocd
 ```
 
-Every application should show `Synced` and `Healthy`.
+Every application should show `Synced` and `Healthy`. Then check what you changed, e.g. that the resource you added exists, or that the app you bumped runs its new version.
 
 ## Clean Up After the Rollout
 

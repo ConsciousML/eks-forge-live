@@ -95,7 +95,7 @@ func assertNodePools(t *testing.T) {
 
 Start every failure message with `[ERROR]`. It's what you search the log for when the test fails in CI (see [Troubleshoot Live CI](/docs/ci-cd/per-repository/troubleshoot-live-ci/#terratest)).
 
-Then call your function from `assertStack`, in [`tests/assert_stack_test.go`](assert_stack_test.go), so that both the CI run and your own run on `staging` execute it (see [Two Tests, One Set of Checks](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#two-tests-one-set-of-checks)):
+Then call your function from `assertStack`, in [`tests/assert_stack_test.go`](assert_stack_test.go), so that the CI run, CD's run on `prod`, and your own run on `staging` execute it (see [Existing Tests](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#existing-tests)):
 ```go
 func assertStack(t *testing.T, ctx context.Context, allOutputs map[string]any, region string) {
 	t.Helper()
@@ -104,6 +104,8 @@ func assertStack(t *testing.T, ctx context.Context, allOutputs map[string]any, r
 	...
 }
 ```
+
+CD runs your check on `prod` after each apply, so it must pass there too: don't hardcode a name that only exists in `staging`, such as `staging-cluster`.
 
 Reuse the helpers of [`tests/helpers_test.go`](helpers_test.go) where they fit:
 - `unitOutput`: reads an output of a unit of the stack, from `allOutputs`.
