@@ -94,7 +94,7 @@ podinfo                       Synced        Healthy
 ...
 ```
 
-Your `prod` tools are also private. Connect to Tailscale by running `tailscale up`, and open Prometheus at `https://prometheus.private.prod.<base_domain>` (replace `<base_domain>` with the value from [`live/dns.hcl`](../live/dns.hcl)). You should see the Prometheus query page.
+Your `prod` tools are also private. Connect to Tailscale by running `tailscale up`, and open Prometheus at `https://prometheus.private.prod.<base_domain>` (replace `<base_domain>` with the value from [`live/dns.hcl`](../live/dns.hcl)). You should see the Prometheus query page. If it doesn't load on macOS, see [Internal Endpoints Are Unreachable on macOS](/docs/troubleshooting/tailscale/#internal-endpoints-are-unreachable-on-macos).
 
 Notice the `private.prod` subdomain: `prod` gets its own, like `staging` and `dev`.
 

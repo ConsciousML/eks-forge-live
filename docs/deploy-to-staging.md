@@ -65,7 +65,7 @@ podinfo                       Synced        Healthy
 ```
 
 ## Log In to ArgoCD
-Like in `dev`, ArgoCD is only reachable using Tailscale. Connect to Tailscale by running `tailscale up`, or with the button in the Tailscale client.
+Like in `dev`, ArgoCD is only reachable using Tailscale. Connect to Tailscale by running `tailscale up`, or with the button in the Tailscale client. If a private hostname doesn't load on macOS, see [Internal Endpoints Are Unreachable on macOS](/docs/troubleshooting/tailscale/#internal-endpoints-are-unreachable-on-macos).
 
 Open `https://argocd.private.staging.<base_domain>` in your browser (replace `<base_domain>` with the value from [`live/dns.hcl`](../live/dns.hcl)) and log in with username `admin`. Retrieve the password with:
 ```bash

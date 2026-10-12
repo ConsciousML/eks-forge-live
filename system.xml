@@ -64,6 +64,7 @@
         - `docs/add-a-staging-environment.md`: deploying a second `staging`-like environment
           next to `staging`
         - `docs/remove-eks-forge.md`: tearing down the live side of EKS Forge
+        - `docs/troubleshoot-iac.md`: fixing a failing destroy of `prod`
         - `tests/README.md`: what Terratest covers and how to extend it
 
         Site pages sourced outside this repo, under https://eks-forge.readthedocs.io/latest:
