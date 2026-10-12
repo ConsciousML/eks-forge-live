@@ -57,7 +57,7 @@ mise install
 
 Skip tools that only exist in the catalog's `mise.toml`, such as `tflint` and `trivy`. They serve catalog development, not live.
 
-If the catalog added a variable to `.env.example`, check what uses it in the [Environment Variables](/docs/reference/environment_variable/) reference. Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `APP_OF_APPS_BRANCH` or `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
+If the catalog added a variable to `.env.example`, check what uses it in the [Environment Variables](/docs/reference/environment_variable/) reference. Skip it if only `dev` or an account-level pipeline that already ran from your catalog fork uses it, such as `BILLING_ANOMALY_MONITOR_ARN`. Otherwise, add it to your live `.env.example` and set it in your `.env`. Point its comment at the variable's entry in the reference, like the existing ones:
 ```bash
 # See https://github.com/ConsciousML/eks-forge-catalog/blob/main/docs/environment-variables.md#slack_bot_token
 export SLACK_BOT_TOKEN=
