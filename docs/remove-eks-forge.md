@@ -39,20 +39,7 @@ If you plan to deploy EKS Forge again, restore the file from the root of your li
 git checkout live/prod/eks/stack/terragrunt.stack.hcl
 ```
 
-{/* MIGRATE: to troubleshoot */}
-#### The Destroy Fails on a Loki Bucket
-If the destroy ends with an error on the `eks/addons/loki/s3/chunks` unit, its bucket still held objects with `force_destroy = false`. Empty the bucket:
-```bash
-aws s3 rm "s3://prod-loki-chunks-$(aws sts get-caller-identity --query Account --output text)-$AWS_REGION" --recursive
-```
-
-Then destroy the unit again, from `live/prod/eks/stack`:
-```bash
-cd .terragrunt-stack/eks/addons/loki/s3/chunks
-terragrunt destroy
-```
-
-If the error is on the `eks/addons/loki/s3/ruler` unit, do the same with the `prod-loki-ruler` bucket and the unit's directory.
+If the destroy ends with an error on a Loki bucket unit, see [The Destroy Fails on a Loki Bucket](/docs/troubleshooting/iac/#the-destroy-fails-on-a-loki-bucket).
 
 ### Delete Leftover EBS Volumes
 `prod` retains the volumes of Prometheus, Alertmanager, and Loki when their pods are deleted, so an accidental deletion doesn't lose your metrics and logs. As a result, these volumes outlive the `prod` stack and keep being billed.
