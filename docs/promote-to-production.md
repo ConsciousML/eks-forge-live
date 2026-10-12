@@ -99,16 +99,31 @@ Notice the `private.prod` subdomain: `prod` gets its own, like `staging` and `de
 ## Destroy Production
 Like in `staging`, destroying the infrastructure removes the [Tailscale Connector](/docs/security/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
 
-Then, switch to `main` to get the code CD deployed, and destroy the infrastructure by running the following commands from the root of your live fork:
+Then, from the root of your live fork, switch to `main` to get the code CD deployed:
 ```bash
 git checkout main
 git pull
+```
+
+`prod` keeps its logs when it's destroyed, so the destroy fails while its Loki buckets hold objects. In [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl), set `force_destroy = true` in the `loki_s3_chunks` and `loki_s3_ruler` blocks.
+
+Apply the two bucket units so the buckets take the new value, then destroy the infrastructure:
+```bash
 source .env
 cd live/prod/eks/stack
 terragrunt stack clean
 terragrunt stack generate
+(cd .terragrunt-stack/eks/addons/loki/s3/chunks && terragrunt apply -auto-approve)
+(cd .terragrunt-stack/eks/addons/loki/s3/ruler && terragrunt apply -auto-approve)
 terragrunt run --all destroy --non-interactive --no-stack-generate
 ```
+
+Now restore the file from the root of your live fork, so `prod` protects its logs on your next deployment:
+```bash
+git checkout live/prod/eks/stack/terragrunt.stack.hcl
+```
+
+`prod` also keeps the volumes of Prometheus, Alertmanager, and Loki. Delete them by following [Delete Leftover EBS Volumes](/docs/iac/remove-eks-forge/#delete-leftover-ebs-volumes).
 
 Keep the `v0.1.8-demo` tag in your catalog fork: `main` now pins it, and CI and CD need it on your next pull request.
 
