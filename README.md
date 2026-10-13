@@ -1,4 +1,4 @@
-![EKS Forge](https://raw.githubusercontent.com/ConsciousML/eks-forge/main/site/static/img/social-card.png)
+![EKS Forge](https://raw.githubusercontent.com/ConsciousML/eks-forge/main/site/static/img/readme-banner.png)
 
 # EKS Forge Live
 
