@@ -49,7 +49,7 @@ git commit -am "feat: add $ENVIRONMENT vpc cidr"
 git push -u origin <branch>
 ```
 
-Without your CIDR in the ACL's `autoApprovers`, the environment's [Tailscale Connector](/docs/security/tailscale/#4-connector-and-split-dns) can't route traffic into its VPC. From the root of your catalog fork, apply the pipeline again:
+Without your CIDR in the ACL's `autoApprovers`, the environment's [Tailscale Connector](/docs/networking/tailscale/#4-connector-and-split-dns) can't route traffic into its VPC. From the root of your catalog fork, apply the pipeline again:
 ```bash
 source .env
 cd pipelines/bootstrap/tailscale/acl

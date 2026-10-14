@@ -99,7 +99,7 @@ Your `prod` tools are also private. Connect to Tailscale by running `tailscale u
 Notice the `private.prod` subdomain: `prod` gets its own, like `staging` and `dev`.
 
 ## Destroy Production
-Like in `staging`, destroying the infrastructure removes the [Tailscale Connector](/docs/security/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
+Like in `staging`, destroying the infrastructure removes the [Tailscale Connector](/docs/networking/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
 
 Then, from the root of your live fork, switch to `main` to get the code CD deployed:
 ```bash
