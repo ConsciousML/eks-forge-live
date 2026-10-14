@@ -1,7 +1,7 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 ## Live Repository
 ### Destroy the Staging Stack
-Destroying a stack removes its [Tailscale Connector](/docs/security/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
+Destroying a stack removes its [Tailscale Connector](/docs/networking/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
 
 Then, run the following from the root of your live fork:
 ```bash

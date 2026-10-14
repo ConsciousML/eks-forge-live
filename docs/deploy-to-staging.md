@@ -100,7 +100,7 @@ What you just did by hand, [CI](/docs/ci-cd/) does automatically on pull request
 ## Destroy the Infrastructure
 CI deploys to the same `staging` environment as you. Destroy your cluster before moving on, so it doesn't collide with CI in the next step.
 
-Like in `dev`, destroying the infrastructure removes the [Tailscale Connector](/docs/security/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
+Like in `dev`, destroying the infrastructure removes the [Tailscale Connector](/docs/networking/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
 
 Finally, destroy the infrastructure by running the following commands from the root of your live fork:
 ```bash
