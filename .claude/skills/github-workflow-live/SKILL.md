@@ -112,3 +112,24 @@ Follow [Check Prod](../../../docs/release-a-change-to-production.md#check-prod) 
 [Clean Up After the Rollout](../../../docs/release-a-change-to-production.md#clean-up-after-the-rollout).
 
 Never destroy a removed unit yourself. Tell the user which units need a manual destroy in `prod`.
+
+## 9. Site Docs Issue
+
+Runs once the PR is merged, so the issue cites the final change. It tells the agent of the
+`eks-forge` repo what changed in live. That agent decides which site pages to update, so don't
+investigate the site docs yourself. Skip if the change only touches skills or comments.
+
+1. Read recent ones and match their style:
+   ```bash
+   gh issue list -R <owner>/eks-forge --label doc-site --state all -L 5
+   ```
+2. Draft it:
+   - Title: `docs: <what changed in live>`.
+   - Body: one sentence citing each PR as `<owner>/<repo>#<N>` and what it changes. Then one
+     bullet per change in live a reader of the site would notice, such as a new bootstrap
+     pipeline, a changed `.hcl` file, or a new step. End with: `Evaluate the site docs against
+     these changes and align them if necessary.`
+3. **Wait**: ask the user whether to open it, even in an autonomous run.
+4. Open it with
+   `gh issue create -R <owner>/eks-forge --label doc-site --assignee @me --title "<title>" --body "<body>"`
+   and report the link.
