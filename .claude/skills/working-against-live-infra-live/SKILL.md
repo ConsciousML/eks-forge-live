@@ -54,6 +54,10 @@ so a mistake there reaches `prod` before any review.
 Plan, report the plan, and **wait** for the user before applying, as in
 [Edit the Bootstrap Configuration](../../../docs/edit-live-configuration.md#edit-the-bootstrap-configuration).
 
+When a command applies to every bootstrap pipeline, run it once from `live/bootstrap` with
+`terragrunt run --all`, not stack by stack. Run a pipeline on its own only when the others need
+what it creates first.
+
 ## Terratest
 
 Follow [Run the Test on Staging](../../../tests/README.md#run-the-test-on-staging).
