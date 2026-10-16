@@ -140,7 +140,7 @@ Copy the unit's `unit` block, and rewrite its `source` from the local path to yo
 # dev
 source = "${get_repo_root()}/units/<unit>"
 # live
-source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/<unit>?ref=${local.version_catalog}"
+source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/<unit>?ref=${local.version_catalog}"
 ```
 
 ### Removed Units
