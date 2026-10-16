@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.1.9.2"
+  version_catalog     = "v0.1.9.3"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # STAGING: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.1.5"
+  app_of_apps_target_revision = "v0.1.6"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -125,7 +125,7 @@ locals {
 # --- VPC + EKS cluster ---
 
 unit "vpc" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/vpc/vpc?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/vpc/vpc?ref=${local.version_catalog}"
   path   = "vpc/vpc"
 
   values = {
@@ -171,7 +171,7 @@ unit "vpc" {
 }
 
 unit "vpc_endpoint_cidrs" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/vpc/endpoint_cidrs?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/vpc/endpoint_cidrs?ref=${local.version_catalog}"
   path   = "vpc/endpoint_cidrs"
 
   values = {
@@ -180,7 +180,7 @@ unit "vpc_endpoint_cidrs" {
 }
 
 unit "vpc_endpoints" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/vpc/endpoints?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/vpc/endpoints?ref=${local.version_catalog}"
   path   = "vpc/endpoints"
 
   values = {
@@ -190,7 +190,7 @@ unit "vpc_endpoints" {
 }
 
 unit "cluster" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/cluster?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/cluster?ref=${local.version_catalog}"
   path   = "eks/cluster"
 
   values = {
@@ -359,7 +359,7 @@ unit "cluster" {
 # --- EBS CSI driver ---
 
 unit "ebs_csi_driver_iam_role" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/ebs_csi_driver/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/ebs_csi_driver/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/ebs_csi_driver/iam_role"
 
   values = {
@@ -369,7 +369,7 @@ unit "ebs_csi_driver_iam_role" {
 }
 
 unit "ebs_csi_driver_addon" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/ebs_csi_driver/addon?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/ebs_csi_driver/addon?ref=${local.version_catalog}"
   path   = "eks/addons/ebs_csi_driver/addon"
 
   values = {
@@ -399,7 +399,7 @@ unit "ebs_csi_driver_addon" {
 # --- Route53 + ACM ---
 
 unit "route53_hosted_zone_public" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/route53/hosted_zone_public?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/route53/hosted_zone_public?ref=${local.version_catalog}"
   path   = "eks/route53/hosted_zone_public"
 
   values = {
@@ -410,7 +410,7 @@ unit "route53_hosted_zone_public" {
 }
 
 unit "route53_hosted_zone_private" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/route53/hosted_zone_private?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/route53/hosted_zone_private?ref=${local.version_catalog}"
   path   = "eks/route53/hosted_zone_private"
 
   values = {
@@ -420,7 +420,7 @@ unit "route53_hosted_zone_private" {
 }
 
 unit "acm_certificate" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/route53/acm_certificate?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/route53/acm_certificate?ref=${local.version_catalog}"
   path   = "eks/route53/acm_certificate"
 
   values = {
@@ -433,7 +433,7 @@ unit "acm_certificate" {
 # app-of-apps.
 
 unit "iam_role_eso" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/external_secrets_operator/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/external_secrets_operator/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/external_secrets_operator/iam_role"
 
   values = {
@@ -447,7 +447,7 @@ unit "iam_role_eso" {
 # app-of-apps.
 
 unit "loki_s3_chunks" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/loki/s3/chunks?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/loki/s3/chunks?ref=${local.version_catalog}"
   path   = "eks/addons/loki/s3/chunks"
 
   values = {
@@ -460,7 +460,7 @@ unit "loki_s3_chunks" {
 }
 
 unit "loki_s3_ruler" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/loki/s3/ruler?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/loki/s3/ruler?ref=${local.version_catalog}"
   path   = "eks/addons/loki/s3/ruler"
 
   values = {
@@ -473,7 +473,7 @@ unit "loki_s3_ruler" {
 }
 
 unit "iam_role_loki" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/loki/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/loki/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/loki/iam_role"
 
   values = {
@@ -487,7 +487,7 @@ unit "iam_role_loki" {
 # renders one.
 
 unit "prometheus_operator_crds" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/prometheus_stack/crds?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/prometheus_stack/crds?ref=${local.version_catalog}"
   path   = "eks/addons/prometheus_stack/crds"
 
   values = {
@@ -499,7 +499,7 @@ unit "prometheus_operator_crds" {
 # --- ArgoCD ---
 
 unit "argocd" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/argocd/helm?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/argocd/helm?ref=${local.version_catalog}"
   path   = "eks/addons/argocd/helm"
 
   values = {
@@ -635,6 +635,14 @@ unit "argocd" {
           requests = { cpu = "11m", memory = "64M" }
           limits   = { cpu = "55m", memory = "64M" }
         }
+        # Copies the argocd binary. With the 64M inherited from resources, it is OOMKilled
+        # mid copy and dex then crashloops on the truncated binary.
+        initImage = {
+          resources = {
+            requests = { cpu = "11m", memory = "128M" }
+            limits   = { cpu = "55m", memory = "128M" }
+          }
+        }
         nodeSelector = local.critical_node_selector
         tolerations  = local.critical_tolerations
       }
@@ -643,7 +651,7 @@ unit "argocd" {
 }
 
 unit "argocd_password" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/argocd/aws_secret_password?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/argocd/aws_secret_password?ref=${local.version_catalog}"
   path   = "eks/addons/argocd/aws_secret_password"
 
   values = {
@@ -654,8 +662,17 @@ unit "argocd_password" {
   }
 }
 
+unit "argocd_repository_secret" {
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/argocd/repository_secret?ref=${local.version_catalog}"
+  path   = "eks/addons/argocd/repository_secret"
+
+  values = {
+    version = local.version_catalog
+  }
+}
+
 unit "argocd_app_of_apps" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/argocd/app_of_apps?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/argocd/app_of_apps?ref=${local.version_catalog}"
   path   = "eks/addons/argocd/app_of_apps"
 
   values = {
@@ -688,7 +705,7 @@ unit "argocd_app_of_apps" {
 # lives in app-of-apps.
 
 unit "iam_policy_aws_lbc" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/aws_load_balancer_controller/iam_policy_url?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/aws_load_balancer_controller/iam_policy_url?ref=${local.version_catalog}"
   path   = "eks/addons/aws_load_balancer_controller/iam_policy_url"
 
   values = {
@@ -698,7 +715,7 @@ unit "iam_policy_aws_lbc" {
 }
 
 unit "iam_role_aws_lbc" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/aws_load_balancer_controller/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/aws_load_balancer_controller/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/aws_load_balancer_controller/iam_role"
 
   values = {
@@ -712,7 +729,7 @@ unit "iam_role_aws_lbc" {
 # live in app-of-apps.
 
 unit "iam_role_external_dns_private" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/external_dns/private/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/external_dns/private/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/external_dns/private/iam_role"
 
   values = {
@@ -722,7 +739,7 @@ unit "iam_role_external_dns_private" {
 }
 
 unit "iam_role_external_dns_public" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/external_dns/public/iam_role?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/external_dns/public/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/external_dns/public/iam_role"
 
   values = {
@@ -737,7 +754,7 @@ unit "iam_role_external_dns_public" {
 # the pipelines/bootstrap/tailscale stack, not the EKS stack.
 
 unit "tailscale_oauth_client_tailscale_operator" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/tailscale/oauth_client_tailscale_operator?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/tailscale/oauth_client_tailscale_operator?ref=${local.version_catalog}"
   path   = "eks/addons/tailscale/oauth_client_tailscale_operator"
 
   values = {
@@ -746,7 +763,7 @@ unit "tailscale_oauth_client_tailscale_operator" {
 }
 
 unit "tailscale_oauth_client_secret" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/tailscale/oauth_client_secret?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/tailscale/oauth_client_secret?ref=${local.version_catalog}"
   path   = "eks/addons/tailscale/oauth_client_secret"
 
   values = {
@@ -757,7 +774,7 @@ unit "tailscale_oauth_client_secret" {
 }
 
 unit "tailscale_split_dns_default" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/tailscale/split_dns/default?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/tailscale/split_dns/default?ref=${local.version_catalog}"
   path   = "eks/addons/tailscale/split_dns/default"
 
   values = {
@@ -766,7 +783,7 @@ unit "tailscale_split_dns_default" {
 }
 
 unit "tailscale_split_dns_eks_endpoint" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/tailscale/split_dns/eks?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/tailscale/split_dns/eks?ref=${local.version_catalog}"
   path   = "eks/addons/tailscale/split_dns/eks"
 
   values = {
@@ -779,7 +796,7 @@ unit "tailscale_split_dns_eks_endpoint" {
 # taint, and cilium-operator (which removes it) can't depend on a Karpenter node.
 
 unit "cilium" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/cilium/helm?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/cilium/helm?ref=${local.version_catalog}"
   path   = "eks/addons/cilium/helm"
 
   values = {
@@ -933,7 +950,7 @@ unit "cilium" {
 # with the cluster), they'd have no CiliumEndpoint. Helm post hook: the apply blocks on it, so
 # Karpenter only installs once it's done.
 unit "cilium_cep_restart" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/cilium/cep_restart?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/cilium/cep_restart?ref=${local.version_catalog}"
   path   = "eks/addons/cilium/cep_restart"
 
   values = {
@@ -947,7 +964,7 @@ unit "cilium_cep_restart" {
 # --- Karpenter ---
 
 unit "karpenter_iam" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/karpenter/iam?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/karpenter/iam?ref=${local.version_catalog}"
   path   = "eks/addons/karpenter/iam"
 
   values = {
@@ -959,7 +976,7 @@ unit "karpenter_iam" {
 }
 
 unit "karpenter_helm" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/karpenter/helm?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/karpenter/helm?ref=${local.version_catalog}"
   path   = "eks/addons/karpenter/helm"
 
   values = {
@@ -986,7 +1003,7 @@ unit "karpenter_helm" {
 }
 
 unit "karpenter_ec2_node_class" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/karpenter/ec2_node_class?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/karpenter/ec2_node_class?ref=${local.version_catalog}"
   path   = "eks/addons/karpenter/ec2_node_class"
 
   values = {
@@ -1008,7 +1025,7 @@ unit "karpenter_ec2_node_class" {
 # Sizing here counts against the account's EC2 Service Quotas, see the catalog repo's
 # pipelines/bootstrap/aws_service_quotas.
 unit "karpenter_node_pool_critical" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/karpenter/node_pool/critical?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/karpenter/node_pool/critical?ref=${local.version_catalog}"
   path   = "eks/addons/karpenter/node_pool/critical"
 
   values = {
@@ -1054,7 +1071,7 @@ unit "karpenter_node_pool_critical" {
 # Sizing here counts against the account's EC2 Service Quotas, see the catalog repo's
 # pipelines/bootstrap/aws_service_quotas.
 unit "karpenter_node_pool_elastic" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/karpenter/node_pool/elastic?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/karpenter/node_pool/elastic?ref=${local.version_catalog}"
   path   = "eks/addons/karpenter/node_pool/elastic"
 
   values = {
@@ -1095,7 +1112,7 @@ unit "karpenter_node_pool_elastic" {
 }
 
 unit "grafana_password" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/prometheus_stack/grafana/aws_secret_password?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/prometheus_stack/grafana/aws_secret_password?ref=${local.version_catalog}"
   path   = "eks/addons/prometheus_stack/grafana/aws_secret_password"
 
   values = {
@@ -1107,7 +1124,7 @@ unit "grafana_password" {
 }
 
 unit "alertmanager_slack_bot_secret" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/addons/prometheus_stack/alertmanager/aws_secret_slack_bot?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/prometheus_stack/alertmanager/aws_secret_slack_bot?ref=${local.version_catalog}"
   path   = "eks/addons/prometheus_stack/alertmanager/aws_secret_slack_bot"
 
   values = {
@@ -1121,7 +1138,7 @@ unit "alertmanager_slack_bot_secret" {
 # --- Domain names ---
 
 unit "domain_name_argocd" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/argocd?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/argocd?ref=${local.version_catalog}"
   path   = "eks/domain_name/argocd"
 
   values = {
@@ -1130,7 +1147,7 @@ unit "domain_name_argocd" {
 }
 
 unit "domain_name_podinfo" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/podinfo?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/podinfo?ref=${local.version_catalog}"
   path   = "eks/domain_name/podinfo"
 
   values = {
@@ -1139,7 +1156,7 @@ unit "domain_name_podinfo" {
 }
 
 unit "domain_name_prometheus" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/prometheus?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/prometheus?ref=${local.version_catalog}"
   path   = "eks/domain_name/prometheus"
 
   values = {
@@ -1148,7 +1165,7 @@ unit "domain_name_prometheus" {
 }
 
 unit "domain_name_alertmanager" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/alertmanager?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/alertmanager?ref=${local.version_catalog}"
   path   = "eks/domain_name/alertmanager"
 
   values = {
@@ -1157,7 +1174,7 @@ unit "domain_name_alertmanager" {
 }
 
 unit "domain_name_grafana" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/grafana?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/grafana?ref=${local.version_catalog}"
   path   = "eks/domain_name/grafana"
 
   values = {
@@ -1166,7 +1183,7 @@ unit "domain_name_grafana" {
 }
 
 unit "domain_name_goldilocks" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/goldilocks?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/goldilocks?ref=${local.version_catalog}"
   path   = "eks/domain_name/goldilocks"
 
   values = {
@@ -1175,7 +1192,7 @@ unit "domain_name_goldilocks" {
 }
 
 unit "domain_name_hubble" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/eks/domain_name/hubble?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/domain_name/hubble?ref=${local.version_catalog}"
   path   = "eks/domain_name/hubble"
 
   values = {

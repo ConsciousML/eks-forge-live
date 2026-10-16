@@ -24,7 +24,7 @@ locals {
 }
 
 unit "vpc" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//units/vpc/vpc?ref=${local.version_catalog}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/vpc/vpc?ref=${local.version_catalog}"
   ...
 }
 ```

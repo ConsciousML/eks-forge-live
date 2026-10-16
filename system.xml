@@ -16,7 +16,7 @@
 
         Unit source format in the live stack files:
         ```
-        source = "github.com/${local.github_username_catalog}/${local.github_repo_name_catalog}//units/{unit}?ref=${local.version_catalog}"
+        source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/{unit}?ref=${local.version_catalog}"
         ```
 
         The catalog equivalent (for diffing) uses local paths:
