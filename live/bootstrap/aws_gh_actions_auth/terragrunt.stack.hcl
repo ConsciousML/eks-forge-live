@@ -1,5 +1,5 @@
 locals {
-  version = "v0.1.9.2"
+  version = "v0.1.9.3"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -14,7 +14,7 @@ locals {
 }
 
 stack "aws_gh_actions_auth" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//stacks/aws_gh_actions_auth?ref=${local.version}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//stacks/aws_gh_actions_auth?ref=${local.version}"
   path   = "github_actions_bootstrap"
   values = {
     version                  = local.version

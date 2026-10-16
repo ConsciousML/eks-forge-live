@@ -99,3 +99,15 @@ They read the same environment variables as the catalog. Copy your catalog `.env
 ```bash
 cp <path-to-your-catalog-fork>/.env .env
 ```
+
+### Terraform State Encryption
+This pipeline creates the KMS key that encrypts every other live state, in S3 and in OpenTofu itself. Run it before the other bootstrap pipelines, they can't write their states without it.
+
+From the root of your live fork, run:
+```bash
+source .env
+cd live/bootstrap/terraform_state_encryption
+terragrunt stack clean
+terragrunt stack generate
+terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
+```
