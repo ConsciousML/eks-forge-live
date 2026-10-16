@@ -1,5 +1,5 @@
 locals {
-  version = "v0.1.9.2"
+  version = "v0.1.9.3"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -8,7 +8,7 @@ locals {
 }
 
 stack "slack" {
-  source = "github.com/${local.github_owner_catalog}/${local.github_repo_name_catalog}//stacks/slack?ref=${local.version}"
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//stacks/slack?ref=${local.version}"
   path   = "slack"
 
   values = {
