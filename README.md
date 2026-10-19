@@ -29,6 +29,10 @@ This repository deploys the [catalog](https://github.com/ConsciousML/eks-forge-c
 
 For how the repositories fit together, see [Platform Architecture](https://eks-forge.readthedocs.io/latest/docs/architecture/#platform-architecture).
 
+## Get Started
+
+The [Production Deployment](https://eks-forge.readthedocs.io/latest/docs/deployment/get-started/) tutorial walks you through forking this repository, testing on `staging`, then promoting a release to `prod`. It builds on the catalog fork you set up in the [Quickstart](https://eks-forge.readthedocs.io/latest/docs/quickstart/).
+
 ## Support
 
 Support is provided on a best-effort basis. If you have feedback, feature ideas, or wish to report a bug, please use the [issues](https://github.com/ConsciousML/eks-forge-live/issues) of this repository, or the [EKS Forge issues](https://github.com/ConsciousML/eks-forge/issues) for anything not specific to it.
