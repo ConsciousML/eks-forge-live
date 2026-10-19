@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  The live deployments of EKS Forge
+  The live repository of EKS Forge
 </p>
 
 <p align="center">
