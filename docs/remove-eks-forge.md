@@ -72,11 +72,18 @@ done
 ```
 
 ### Destroy the Live Bootstrap
-From the root of your live fork, destroy the [bootstrap pipelines](/docs/deployment/get-started/live-repository-setup/#bootstrap):
+From the root of your live fork, destroy the [bootstrap pipelines](/docs/deployment/get-started/live-repository-setup/#bootstrap), except the state KMS key. The other states need it to decrypt, and its `prevent_destroy` would fail the run:
 ```bash
 source .env
 cd live/bootstrap
-terragrunt run --all destroy --non-interactive
+terragrunt run --all destroy --non-interactive --filter '!./terraform_state_encryption/**'
 ```
+
+Then, schedule the deletion of the key:
+```bash
+aws kms schedule-key-deletion --key-id $(aws kms describe-key --key-id alias/bootstrap-live-eks-tofu-state --query KeyMetadata.KeyId --output text)
+```
+
+AWS deletes it after a waiting period, and you can restore it until then (see [Deletion](/docs/reference/terraform_modules/kms_key/#deletion)).
 
 Finally, in your domain registrar, remove the NS records of the `staging` and `prod` subdomains, and of any environment you added. Left in place, they point your subdomains at name servers you no longer control, which can let someone else take them over.
