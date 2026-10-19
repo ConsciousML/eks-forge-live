@@ -111,3 +111,10 @@ terragrunt stack clean
 terragrunt stack generate
 terragrunt run --all apply --backend-bootstrap --non-interactive --no-stack-generate
 ```
+
+Then, check the key through its [alias](https://docs.aws.amazon.com/kms/latest/developerguide/kms-alias.html):
+```bash
+aws kms describe-key --key-id alias/bootstrap-live-eks-tofu-state --query KeyMetadata.KeyState --output text
+```
+
+You should see `Enabled`.
