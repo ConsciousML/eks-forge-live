@@ -72,8 +72,6 @@ locals {
 ```
 This makes your live fork use the modules and units of your catalog fork instead of the original catalog repository.
 
-If your app of apps fork is private, also set `app_of_apps_private = true`, so ArgoCD reads it over SSH with the deploy key of the [App of Apps Deploy Key](/docs/reference/bootstrap/app_of_apps_deploy_key/) bootstrap. See the [HCL Configuration](/docs/reference/hcl_configuration/) reference.
-
 Each [environment](/docs/iac/#environments) sets its AWS region in its own `region.hcl` file:
 - [`live/staging/region.hcl`](../live/staging/region.hcl)
 - [`live/prod/region.hcl`](../live/prod/region.hcl)
