@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.1.9.3"
+  version_catalog     = "v0.1.10"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # PROD: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.1.6"
+  app_of_apps_target_revision = "v0.2.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -583,19 +583,9 @@ unit "argocd" {
         nodeSelector = local.critical_node_selector
         tolerations  = local.critical_tolerations
       }
+      # Alerts go through Alertmanager. Its ClusterRole lists Secrets in every namespace.
       notifications = {
-        metrics = {
-          enabled = true
-          serviceMonitor = {
-            enabled = true
-          }
-        }
-        resources = {
-          requests = { cpu = "50m", memory = "64M" }
-          limits   = { cpu = "50m", memory = "64M" }
-        }
-        nodeSelector = local.critical_node_selector
-        tolerations  = local.critical_tolerations
+        enabled = false
       }
       applicationSet = {
         resources = {

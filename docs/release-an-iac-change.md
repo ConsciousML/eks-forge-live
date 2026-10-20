@@ -25,7 +25,7 @@ git push origin <new-tag>
 Your current tag is the `version_catalog` at the top of [`live/prod/eks/stack/terragrunt.stack.hcl`](../live/prod/eks/stack/terragrunt.stack.hcl):
 ```hcl
 locals {
-  version_catalog = "v0.1.9.3"
+  version_catalog = "v0.1.10"
   ...
 }
 ```
