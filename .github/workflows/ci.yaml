@@ -46,7 +46,6 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           deploy-keys: |
-            ${{ secrets.DEPLOY_KEY_TG_LIVE }}
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -76,7 +75,6 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           deploy-keys: |
-            ${{ secrets.DEPLOY_KEY_TG_LIVE }}
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
@@ -243,7 +241,6 @@ jobs:
       - uses: ./.github/actions/setup
         with:
           deploy-keys: |
-            ${{ secrets.DEPLOY_KEY_TG_LIVE }}
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
