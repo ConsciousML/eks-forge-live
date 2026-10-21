@@ -142,8 +142,9 @@ export AWS_REGION=<region-code>
 aws eks update-kubeconfig --region $AWS_REGION --name staging-cluster
 ```
 
-Then, from the root of your live fork, run `TestStackExists`:
+Then, from the root of your live fork, run `TestStackExists`. It reads the stack outputs with Terragrunt, which needs the tokens of your `.env`:
 ```bash
+source .env
 go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
 ```
 
