@@ -88,6 +88,13 @@ The `bootstrap` file has no `azs`, so you only need to set `region`.
 
 You can also leave them as is if you plan to use `us-east-1`.
 
+Commit and push your changes. The CI/CD pipelines read these files from your fork on GitHub, not from your machine:
+```bash
+git add live/github.hcl live/staging/region.hcl live/prod/region.hcl live/bootstrap/region.hcl
+git commit -m "chore: configure the live fork"
+git push origin main
+```
+
 ## Bootstrap
 :::warning
 These pipelines need to run only once per live fork before deploying to [`staging`](/docs/deployment/get-started/deploy-to-staging/) and [`prod`](/docs/deployment/get-started/promote-to-production/).

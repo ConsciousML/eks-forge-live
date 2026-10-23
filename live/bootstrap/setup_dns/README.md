@@ -10,6 +10,13 @@ locals {
 }
 ```
 
+Then, commit and push it, so the CI/CD pipelines use your domain:
+```bash
+git add live/dns.hcl
+git commit -m "chore: set the base domain"
+git push origin main
+```
+
 :::info
 Each subdirectory provisions its own hosted zone, giving that environment its own subdomain (e.g. `staging.yourdomain.com`):
 ```
