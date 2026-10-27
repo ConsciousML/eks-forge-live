@@ -1,5 +1,5 @@
 locals {
-  version = "v0.1.10"
+  version = "v0.1.11"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -93,11 +93,9 @@ stack "aws_gh_actions_auth" {
     oidc_thumbprint_list = []
     create_oidc_provider = false
     deploy_key_repositories = [
-      local.github_repo_name_live,
       local.github_repo_name_catalog,
     ]
     deploy_key_secret_names = [
-      "DEPLOY_KEY_TG_LIVE",
       "DEPLOY_KEY_TG_CATALOG",
     ]
     deploy_key_title = "Terragrunt Live EKS Deploy Key"
