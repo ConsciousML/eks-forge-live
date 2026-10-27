@@ -84,6 +84,7 @@ You can apply and destroy `staging` by hand, as you just did, but its main purpo
 
 Keep Tailscale connected: the tests reach your private endpoints. From the root of your live fork, run the following, replacing `<region-code>` with the region you set in `live/staging/region.hcl`:
 ```bash
+source .env
 export AWS_REGION=<region-code>
 go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
 ```
