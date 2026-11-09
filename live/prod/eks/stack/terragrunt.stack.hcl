@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.1.11"
+  version_catalog     = "v0.2.1"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # PROD: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.2.0"
+  app_of_apps_target_revision = "v0.3.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -676,6 +676,9 @@ unit "argocd_app_of_apps" {
     sync_options          = ["CreateNamespace=true"]
     prune                 = true
     helm_chart_version    = local.version_argocd_apps
+    # PROD: dev reads PAGERDUTY_ENABLED and never pages by default. Prod always pages.
+    pagerduty_enabled        = true
+    pagerduty_service_region = get_env("PAGERDUTY_SERVICE_REGION", "")
     retry = {
       limit = 7
       backoff = {
