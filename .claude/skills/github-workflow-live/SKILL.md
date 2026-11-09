@@ -65,9 +65,8 @@ opening the PR. CI deploys to the same `staging`.
      `Part of <owner>/<repo>#<issue>`. Then one or two lines or bullets.
    - Labels: `run-terratest` by default. `skip-terratest` and `skip-cd` together when the change
      only touches docs, skills, or comments.
-2. **Wait** for the user to validate the draft. If they asked for an autonomous run, skip the wait.
-3. Commit and push with `git push -u origin <branch>`.
-4. Open it with `gh pr create --title "<title>" --body "<body>" --label <label>` and report the
+2. Commit and push with `git push -u origin <branch>`.
+3. Open it with `gh pr create --title "<title>" --body "<body>" --label <label>` and report the
    link.
 
 Labels go on the PR, never on the issue. CI fails without exactly one of `run-terratest` and

@@ -14,6 +14,8 @@ locals {
     "argocd-warning",
     "uptime-critical",
     "uptime-warning",
+    "slo-critical",
+    "slo-warning",
     "watchdog",
     "unrouted",
   ]
