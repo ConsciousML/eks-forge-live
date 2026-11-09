@@ -117,8 +117,8 @@ jobs:
           TAILSCALE_OAUTH_CLIENT_SECRET: ${{ steps.ts-oauth-create.outputs.client_secret }}
           EKS_LOCAL_ADMIN_ARN: ${{ secrets.EKS_LOCAL_ADMIN_ARN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          # The secret stores the empty US region as `us`, see units/pagerduty/github_secrets (catalog).
-          PAGERDUTY_SERVICE_REGION: ${{ secrets.PAGERDUTY_SERVICE_REGION != 'us' && secrets.PAGERDUTY_SERVICE_REGION || '' }}
+          # Holds `us` for a US account. Only the app of apps unit reads it, and it checks for `eu` only.
+          PAGERDUTY_SERVICE_REGION: ${{ secrets.PAGERDUTY_SERVICE_REGION }}
         run: |
           cd live/${{ matrix.env }}
           terragrunt stack generate
@@ -286,8 +286,8 @@ jobs:
           TAILSCALE_OAUTH_CLIENT_SECRET: ${{ steps.ts-oauth-create.outputs.client_secret }}
           EKS_LOCAL_ADMIN_ARN: ${{ secrets.EKS_LOCAL_ADMIN_ARN }}
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          # The secret stores the empty US region as `us`, see units/pagerduty/github_secrets (catalog).
-          PAGERDUTY_SERVICE_REGION: ${{ secrets.PAGERDUTY_SERVICE_REGION != 'us' && secrets.PAGERDUTY_SERVICE_REGION || '' }}
+          # Holds `us` for a US account. Only the app of apps unit reads it, and it checks for `eu` only.
+          PAGERDUTY_SERVICE_REGION: ${{ secrets.PAGERDUTY_SERVICE_REGION }}
         run: go test -v -run '^TestStack$' ./tests/... -timeout ${{ env.TERRATEST_TIMEOUT }}
 
   revoke-oauth:
