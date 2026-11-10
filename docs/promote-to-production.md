@@ -98,6 +98,8 @@ Your `prod` tools are also private. Connect to Tailscale by running `tailscale u
 
 Notice the `private.prod` subdomain: `prod` gets its own, like `staging` and `dev`.
 
+Unlike `staging` and `dev`, `prod` also pages: when one of its SLO page alerts fires, PagerDuty pages you on top of Slack (see [How Paging Works](/docs/monitoring/paging/how-paging-works/)). To get paged end to end without breaking `prod`, follow [Get Your First Page](/docs/monitoring/get-started/paging/) in `dev`.
+
 ## Destroy Production
 Like in `staging`, destroying the infrastructure removes the [Tailscale Connector](/docs/networking/tailscale/#4-connector-and-split-dns), so you lose access to the cluster API. Before destroying the stack, disconnect from Tailscale by running `tailscale down`, or with the button in the Tailscale client.
 

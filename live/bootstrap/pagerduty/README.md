@@ -1,6 +1,6 @@
 {/* This doc is aggregated into the EKS Forge documentation site: https://eks-forge.readthedocs.io/latest/. It is not meant to be read directly in this repository. */}
 ### PagerDuty
-This pipeline creates the `staging` and `prod` PagerDuty services Alertmanager pages through, stores their integration keys in AWS Secrets Manager, and adds your PagerDuty service region to your live fork's GitHub secrets. Only `prod` pages, `staging` alerts reach Slack only.
+This pipeline creates the `staging` and `prod` PagerDuty services Alertmanager pages through, stores their integration keys in AWS Secrets Manager, and adds your PagerDuty service region to your live fork's GitHub secrets. Only `prod` pages, `staging` alerts reach Slack only (see [Paging Is Opt-In per Environment](/docs/monitoring/paging/how-paging-works/#paging-is-opt-in-per-environment)).
 
 It reads `PAGERDUTY_TOKEN` and `PAGERDUTY_SERVICE_REGION` from your `.env`, as described in the [Environment Variables](/docs/reference/environment_variable/#pagerduty_token-and-pagerduty_service_region) reference.
 
