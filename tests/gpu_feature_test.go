@@ -39,8 +39,9 @@ var (
 
 // assertGPUFeature checks the gpu feature deployed without running a GPU workload: its
 // Applications are Synced and Healthy, its NodePools and EC2NodeClass are Ready, and its
-// DaemonSets land on every GPU node of both NodePools. Skipped unless FEATURE_GPU_ENABLED is
-// "true", which CI and CD export from the feature_toggles bootstrap's GitHub variables.
+// DaemonSets tolerate the gpu taint and select NVIDIA nodes. Skipped unless
+// FEATURE_GPU_ENABLED is "true", which CI and CD export from the feature_toggles bootstrap's
+// GitHub variables.
 func assertGPUFeature(t *testing.T) {
 	t.Helper()
 

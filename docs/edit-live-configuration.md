@@ -47,18 +47,20 @@ export FEATURE_GPU_ENABLED=true
 
 Then run the [Feature Toggles](/docs/deployment/get-started/live-repository-setup/#feature-toggles) bootstrap pipeline, so CI and CD deploy it too. Run `terragrunt stack clean` before your next local run of a stack, since `terragrunt stack generate` keeps the directory of a feature generated earlier.
 
-A disabled feature is no longer generated, so it can't be destroyed afterwards. To disable one, destroy it in `prod` while it's still enabled, from the root of your live fork:
+A disabled feature is no longer generated, so it can't be destroyed afterwards. To disable one, first remove its line from your `.env` file, unset it in your shell, and rerun the Feature Toggles bootstrap pipeline, so CD stops deploying it:
+```bash
+unset FEATURE_GPU_ENABLED
+```
+
+Then destroy it in `prod` from the root of your live fork, with the toggle set for these commands only. Terratest destroys `staging` after each run, so `prod` is the only environment to destroy:
 ```bash
 source .env
 cd live/prod/eks/stack
+export FEATURE_GPU_ENABLED=true
 terragrunt stack clean
 terragrunt stack generate
 cd .terragrunt-stack/gpu
 terragrunt run --all destroy
-```
-
-Then remove its line from your `.env` file, unset it in your shell, and rerun the Feature Toggles bootstrap pipeline:
-```bash
 unset FEATURE_GPU_ENABLED
 ```
 

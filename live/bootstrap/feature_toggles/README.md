@@ -24,5 +24,5 @@ gh variable list
 You should see a `FEATURE_<NAME>_ENABLED` variable for each feature you enabled, and none for the others.
 
 :::warning
-Rerun this pipeline each time you enable or disable a feature. To disable a feature, destroy it in `staging` and `prod` first, as described in [Edit the Live Configuration](/docs/iac/edit-live-configuration/).
+Rerun this pipeline each time you enable or disable a feature. To disable a feature, rerun it first, then destroy the feature in `prod`, as described in [Edit the Live Configuration](/docs/iac/edit-live-configuration/).
 :::
