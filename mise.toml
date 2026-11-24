@@ -1,6 +1,6 @@
 [tools]
 opentofu = "1.11.5"
-terragrunt = "1.1.3"
+terragrunt = "1.2.2"
 prek = "0.4.1"
 go = "1.26"
 aws-cli = "2.33.4"

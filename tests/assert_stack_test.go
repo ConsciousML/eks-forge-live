@@ -14,8 +14,6 @@ func waitAndAssertStack(t *testing.T, ctx context.Context, stackDir string, regi
 
 	updateKubeconfig(t, allOutputs, region)
 
-	waitForAppOfApps(t)
-
 	reconnectTailscale(t)
 
 	assertStack(t, ctx, allOutputs, region)
@@ -26,4 +24,5 @@ func assertStack(t *testing.T, ctx context.Context, allOutputs map[string]any, r
 	t.Helper()
 
 	assertEndpoints(t, ctx, allOutputs, region)
+	assertGPUFeature(t)
 }

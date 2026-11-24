@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.2.2"
+  version_catalog     = "v0.3.0"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # STAGING: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.3.1"
+  app_of_apps_target_revision = "v0.4.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -535,6 +535,11 @@ unit "argocd" {
                   hs.message = obj.status.health.message
                 end
               end
+              -- An app whose manifests aren't rendered yet has no resources, so reports Healthy.
+              if hs.status == "Healthy" and (obj.status.sync == nil or obj.status.sync.status ~= "Synced") then
+                hs.status = "Progressing"
+                hs.message = "Waiting for sync"
+              end
             end
             return hs
           LUA
@@ -670,9 +675,9 @@ unit "argocd_app_of_apps" {
 
   values = {
     version   = local.version_catalog
-    name      = "app-of-apps"
+    name      = "app-of-apps-core"
     namespace = "argocd"
-    path      = "apps"
+    path      = "apps/core"
     # Fully qualified release tag: resolves directly instead of scanning all branches/tags.
     target_revision       = local.app_of_apps_target_revision
     project               = "default"
@@ -685,14 +690,18 @@ unit "argocd_app_of_apps" {
     # STAGING: CI deploys staging, so it never pages. Its alerts reach Slack only.
     pagerduty_enabled        = false
     pagerduty_service_region = get_env("PAGERDUTY_SERVICE_REGION", "")
+    # Retries span longer than the wait Job's wait_timeout.
     retry = {
-      limit = 7
+      limit = 20
       backoff = {
         duration     = "5s"
         factor       = 2
         max_duration = "2m"
       }
     }
+    # The wait Job runs next to the ArgoCD controller.
+    node_selector = local.critical_node_selector
+    tolerations   = local.critical_tolerations
   }
 }
 
@@ -1193,5 +1202,99 @@ unit "domain_name_hubble" {
 
   values = {
     version = local.version_catalog
+  }
+}
+
+# --- Optional features ---
+# Off unless FEATURE_<NAME>_ENABLED is "true". Destroy a feature before disabling it, since a
+# disabled feature is no longer generated. Run `terragrunt stack clean` after changing one, since
+# `stack generate` keeps a feature's directory.
+
+stack "gpu" {
+  source  = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//stacks/gpu?ref=${local.version_catalog}"
+  path    = "gpu"
+  enabled = get_env("FEATURE_GPU_ENABLED", "false") == "true"
+
+  values = {
+    version                        = local.version_catalog
+    github_owner_catalog           = local.github_owner_catalog
+    github_repo_name_catalog       = local.github_repo_name_catalog
+    core_karpenter_iam_path        = unit.karpenter_iam.path
+    core_karpenter_helm_path       = unit.karpenter_helm.path
+    core_app_of_apps_path          = unit.argocd_app_of_apps.path
+    app_of_apps_target_revision    = local.app_of_apps_target_revision
+    app_of_apps_helm_chart_version = local.version_argocd_apps
+
+    # Prefix of the EC2NodeClass and NodePool names.
+    name = "gpu"
+    # Picks the NVIDIA AMI variant on GPU instances.
+    # STAGING: dev uses "al2023@latest", staging pins the core EC2NodeClass's AMI release so GPU
+    # nodes don't roll on every new AMI publish.
+    ec2_node_class_ami_alias        = "al2023@v20260618"
+    ec2_node_class_kubelet_max_pods = 110
+    # Kubelet and containerd on the local NVMe, which every allowed family ships. The root EBS
+    # volume keeps the AMI's 20 GiB for the OS.
+    ec2_node_class_instance_store_policy = "RAID0"
+
+    # Shared by both NodePools. The stack adds each pool's karpenter.sh/capacity-type.
+    node_pool_requirements = [
+      {
+        key      = "kubernetes.io/arch"
+        operator = "In"
+        values   = ["amd64"]
+      },
+      {
+        key      = "kubernetes.io/os"
+        operator = "In"
+        values   = ["linux"]
+      },
+      # NVIDIA only, CUDA compute capability 7.5 or higher, whole GPUs, and local NVMe.
+      {
+        key      = "karpenter.k8s.aws/instance-family"
+        operator = "In"
+        values   = ["g4dn", "g5", "g6", "gr6", "g7", "g6e", "g7e"]
+      },
+      {
+        key      = "karpenter.k8s.aws/instance-gpu-count"
+        operator = "In"
+        values   = ["1"]
+      }
+    ]
+    # Shared by both NodePools. Pods pick one with a karpenter.sh/capacity-type nodeSelector.
+    node_pool_taints = [
+      {
+        key    = "karpenter.sh/workload-class"
+        value  = "gpu"
+        effect = "NoSchedule"
+      }
+    ]
+    node_pool_startup_taints = local.karpenter_node_pool_startup_taints
+    node_pool_disruption = {
+      consolidationPolicy = "WhenEmptyOrUnderutilized"
+      consolidateAfter    = "5m"
+      budgets = [
+        # Empty GPU nodes cost the most for nothing.
+        {
+          nodes   = "100%"
+          reasons = ["Empty"]
+        },
+        # Replacing a busy GPU node restarts its workload.
+        {
+          nodes   = "1"
+          reasons = ["Underutilized", "Drifted"]
+        }
+      ]
+    }
+    # Match gpu_spot_desired_value and gpu_ondemand_desired_value in
+    # the catalog fork's pipelines/bootstrap/aws_service_quotas.
+    node_pool_spot_limits_cpu      = "8"
+    node_pool_on_demand_limits_cpu = "8"
+    # Bounds how long a karpenter.sh/do-not-disrupt pod blocks drift and expiry.
+    node_pool_termination_grace_period = "1h"
+    node_pool_expire_after             = "720h"
+
+    # Wait Job blocking until app-of-apps-gpu is Synced and Healthy.
+    app_of_apps_wait_job_node_selector = local.critical_node_selector
+    app_of_apps_wait_job_tolerations   = local.critical_tolerations
   }
 }

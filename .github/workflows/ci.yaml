@@ -38,7 +38,7 @@ jobs:
     needs: check-if-pr-is-draft
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # Installs all required tools (`mise.toml`)
       # Authenticates with AWS
@@ -49,11 +49,12 @@ jobs:
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          vars-json: ${{ toJSON(vars) }}
 
       # Runs the checks as in pre-commits (terragrunt-hcl-fmt) using prek
       # This prevents any discrepancies between the pre-commit checks and the CI checks
       - name: Run pre-commit hooks (prek)
-        uses: j178/prek-action@v2.0.4
+        uses: j178/prek-action@bdca6f102f98e2b4c7029491a53dfd366469e33d # v2.0.4
 
   terragrunt-validate-plan:
     runs-on: ubuntu-24.04
@@ -66,7 +67,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # Installs all required tools (`mise.toml`)
       # Authenticates with AWS
@@ -78,6 +79,7 @@ jobs:
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          vars-json: ${{ toJSON(vars) }}
           ts-oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           ts-audience: ${{ secrets.TS_AUDIENCE }}
           ts-tags: ${{ secrets.TS_TAGS }}
@@ -104,7 +106,7 @@ jobs:
         run: echo "${{ steps.ts-oauth-create.outputs.client_id }}" > client_id.txt
 
       - name: Upload OAuth client ID
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ts-client-id-${{ matrix.env }}
           path: client_id.txt
@@ -130,7 +132,7 @@ jobs:
       - name: Upload plan output (prod)
         if: matrix.env == 'prod'
         id: upload-plan
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: terragrunt-prod-plan
           path: live/prod/prod-plan-output.html
@@ -141,7 +143,7 @@ jobs:
 
       - name: Upload artifact URL file
         if: matrix.env == 'prod'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: artifact-url
           path: artifact_url.txt
@@ -155,7 +157,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Check PR labels
         id: check-pr-labels
@@ -178,7 +180,7 @@ jobs:
 
       - name: Comment on PR if both labels are present
         if: steps.check-pr-labels.outputs.run_present == 'true' && steps.check-pr-labels.outputs.skip_present == 'true'
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             :x: Both `run-terratest` and `skip-terratest` labels are present on this PR.
@@ -190,7 +192,7 @@ jobs:
 
       - name: Comment on PR if 'skip-terratest' label is present
         if: steps.check-pr-labels.outputs.skip_present == 'true'
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             The `skip-terratest` label have been added to this PR.
@@ -198,7 +200,7 @@ jobs:
 
       - name: Comment PR if missing label
         if: steps.check-pr-labels.outputs.run_present == 'false' && steps.check-pr-labels.outputs.skip_present == 'false'
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             :x: Please add the `run-terratest` label to this PR in order to run infrastructure tests.
@@ -234,7 +236,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # Installs all required tools (`mise.toml`)
       # Authenticates with AWS
@@ -246,6 +248,7 @@ jobs:
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
+          vars-json: ${{ toJSON(vars) }}
           ts-oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           ts-audience: ${{ secrets.TS_AUDIENCE }}
           ts-tags: ${{ secrets.TS_TAGS }}
@@ -299,7 +302,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Request Tailscale API token using WIF credentials
         id: ts-token-exchange
@@ -326,12 +329,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Download OAuth client ID
         id: download-client-id
         continue-on-error: true
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: ts-client-id-${{ matrix.env }}
 
@@ -362,7 +365,7 @@ jobs:
 
     steps:
       - name: Download artifact-url file
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: artifact-url
 
@@ -379,7 +382,7 @@ jobs:
           echo "url=$url" >> $GITHUB_OUTPUT
 
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v3
+        uses: thollander/actions-comment-pull-request@24bffb9b452ba05a4f3f77933840a6a841d1b32b # v3.0.1
         with:
           message: |
             :warning: **Production Plan Available**

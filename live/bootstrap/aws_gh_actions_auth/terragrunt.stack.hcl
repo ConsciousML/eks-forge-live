@@ -1,5 +1,5 @@
 locals {
-  version = "v0.2.1"
+  version = "v0.3.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -22,7 +22,32 @@ stack "aws_gh_actions_auth" {
     github_repo_name_catalog = local.github_repo_name_catalog
     github_owner             = local.github_owner_live
     github_repo_name         = local.github_repo_name_live
+    github_token             = local.github_token
+    oidc_url                 = "https://token.actions.githubusercontent.com"
+    oidc_client_id_list      = ["sts.amazonaws.com"]
+    oidc_thumbprint_list     = []
+    create_oidc_provider     = false
+    deploy_key_repositories = [
+      local.github_repo_name_catalog,
+    ]
+    deploy_key_secret_names = [
+      "DEPLOY_KEY_TG_CATALOG",
+    ]
+    deploy_key_title = "Terragrunt Live EKS Deploy Key"
+  }
+}
+
+stack "aws_gh_actions_role" {
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//stacks/aws_gh_actions_role?ref=${local.version}"
+  path   = "github_actions_role"
+  values = {
+    version                  = local.version
+    github_owner_catalog     = local.github_owner_catalog
+    github_repo_name_catalog = local.github_repo_name_catalog
+    github_owner             = local.github_owner_live
+    github_repo_name         = local.github_repo_name_live
     subject_claim_prefix     = local.subject_claim_prefix
+    github_branch            = "*"
     github_token             = local.github_token
     iam_role_name            = "gh-tg-live-eks-role"
     max_session_duration     = 9000
@@ -87,18 +112,6 @@ stack "aws_gh_actions_auth" {
         })
       }
     ]
-    github_branch        = "*"
-    oidc_url             = "https://token.actions.githubusercontent.com"
-    oidc_client_id_list  = ["sts.amazonaws.com"]
-    oidc_thumbprint_list = []
-    create_oidc_provider = false
-    deploy_key_repositories = [
-      local.github_repo_name_catalog,
-    ]
-    deploy_key_secret_names = [
-      "DEPLOY_KEY_TG_CATALOG",
-    ]
-    deploy_key_title = "Terragrunt Live EKS Deploy Key"
   }
 }
 
