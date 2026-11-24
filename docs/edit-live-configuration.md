@@ -3,6 +3,7 @@
 This guide shows you how to change the configuration of [`staging`](/docs/iac/#staging) and [`prod`](/docs/iac/#prod) from your [live fork](/docs/deployment/get-started/live-repository-setup/#fork-the-live-repository):
 - The `values` your [units](/docs/iac/#units) receive.
 - The shared `.hcl` files.
+- The optional features.
 - The bootstrap pipelines.
 
 You don't change any unit's code, so the catalog stays the same and you don't need to tag a new version. To change a unit's code, see [Add or Edit a Unit](/docs/iac/add-a-unit/) or [Remove a Unit](/docs/iac/remove-a-unit/) instead.
@@ -34,6 +35,32 @@ If you delete a `unit` block, see [Removed Units](/docs/iac/release-an-iac-chang
 ## Edit the Shared Configuration
 
 The `.hcl` files at the root of `live/`, such as [`dns.hcl`](../live/dns.hcl) and [`network.hcl`](../live/network.hcl), are shared: a change there applies to both `staging` and `prod`. The files under `live/<env>/` and `live/<env>/eks/`, such as `region.hcl`, `domains.hcl`, and `vpc.hcl`, only apply to their environment. See the [HCL Configuration](/docs/reference/hcl_configuration/) reference for what each file sets.
+
+## Enable or Disable an Optional Feature
+
+Each optional feature, such as `gpu`, is a `stack` block at the end of both EKS stack files, deployed only when its `FEATURE_<NAME>_ENABLED` toggle is `true`. One toggle enables the feature in both `staging` and `prod`.
+
+To enable one, set its toggle in your `.env` file, as described in the [`FEATURE_GPU_ENABLED`](/docs/reference/environment_variable/#feature_gpu_enabled) reference:
+```bash
+export FEATURE_GPU_ENABLED=true
+```
+
+Then run the [Feature Toggles](/docs/deployment/get-started/live-repository-setup/#feature-toggles) bootstrap pipeline, so CI and CD deploy it too. Run `terragrunt stack clean` before your next local run of a stack, since `terragrunt stack generate` keeps the directory of a feature generated earlier.
+
+A disabled feature is no longer generated, so it can't be destroyed afterwards. To disable one, destroy it in `prod` while it's still enabled, from the root of your live fork:
+```bash
+source .env
+cd live/prod/eks/stack
+terragrunt stack clean
+terragrunt stack generate
+cd .terragrunt-stack/gpu
+terragrunt run --all destroy
+```
+
+Then remove its line from your `.env` file, unset it in your shell, and rerun the Feature Toggles bootstrap pipeline:
+```bash
+unset FEATURE_GPU_ENABLED
+```
 
 ## Edit the Bootstrap Configuration
 
