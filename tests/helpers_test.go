@@ -19,7 +19,7 @@ import (
 
 // retryUntil calls check on each attempt (1-indexed, up to retries+1), sleeping
 // sleepBetweenRetries in between. check logs its own failure detail and returns ready to stop
-// early, or abort to stop without using the rest of the budget (a stall detector firing, say).
+// early, or abort to stop without using the rest of the budget.
 // Either way check owns any t.Fatalf. If the budget runs out, onTimeout runs and must fail the
 // test.
 func retryUntil(t *testing.T, retries int, sleepBetweenRetries time.Duration, onTimeout func(), check func(attempt int) (ready bool, abort bool)) {

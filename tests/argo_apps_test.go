@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"os/exec"
-	"sort"
-	"strings"
 	"testing"
 )
 
@@ -27,7 +25,7 @@ type argoAppList struct {
 	Items []argoAppStatus `json:"items"`
 }
 
-// listApps fetches every Application in the argocd namespace. 
+// listApps fetches every Application in the argocd namespace.
 func listApps(t *testing.T) (argoAppList, error) {
 	t.Helper()
 
@@ -44,27 +42,6 @@ func listApps(t *testing.T) (argoAppList, error) {
 		return argoAppList{}, err
 	}
 	return list, nil
-}
-
-// state returns a composite sync and health string keyed by app name, used for stall
-// detection so a child app still making progress (e.g. mid-deploy) resets the stall
-// timer even while the app-of-apps parent itself reports a stale sync and health state.
-func (l argoAppList) state() string {
-	items := append([]argoAppStatus(nil), l.Items...)
-	sort.Slice(items, func(i, j int) bool {
-		return items[i].Metadata.Name < items[j].Metadata.Name
-	})
-
-	var state strings.Builder
-	for _, app := range items {
-		state.WriteString(app.Metadata.Name)
-		state.WriteByte('=')
-		state.WriteString(app.Status.Sync.Status)
-		state.WriteByte('/')
-		state.WriteString(app.Status.Health.Status)
-		state.WriteByte(';')
-	}
-	return state.String()
 }
 
 // find returns the app with the given name, if present.

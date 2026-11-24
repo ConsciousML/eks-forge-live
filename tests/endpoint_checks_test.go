@@ -12,8 +12,8 @@ import (
 )
 
 // endpointRetries and endpointSleep bound how long each endpoint check waits for its tool
-// to become reachable. waitForAppOfApps already confirms every app is healthy, so this
-// budget only covers DNS propagation and ALB/target-group lag, not app startup.
+// to become reachable. The apply already waits until every app is Synced and Healthy, so
+// this budget only covers DNS propagation and ALB/target-group lag, not app startup.
 const (
 	endpointRetries = 30
 	endpointSleep   = 10 * time.Second
