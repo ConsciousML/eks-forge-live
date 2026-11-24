@@ -20,19 +20,22 @@ inputs:
   ts-tags:
     description: 'Tailscale tags to assign to the runner device when joining the tailnet'
     required: false
+  vars-json:
+    description: 'The vars context as JSON (toJSON(vars)), since a composite action cannot read vars'
+    required: true
 
 runs:
   using: 'composite'
   steps:
     # Use deploy key for Terragrunt to pull private repositories
-    - uses: webfactory/ssh-agent@v0.10.0
+    - uses: webfactory/ssh-agent@e83874834305fe9a4a2997156cb26c5de65a8555 # v0.10.0
       with:
         ssh-private-key: ${{ inputs.deploy-keys }}
 
     # Use OIDC to authenticate GitHub Actions with AWS
     # Terragrunt needs permissions from AWS to run plan and apply
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v6.1.1
+      uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
       with:
         role-to-assume: ${{ inputs.role-to-assume }}
         aws-region: ${{ inputs.aws-region }}
@@ -43,7 +46,7 @@ runs:
     # Mise installs all required tools (Terragrunt, OpenTofu, Go, Python, ...)
     # See `mise.toml`.
     - name: Install mise
-      uses: jdx/mise-action@v4.0.1
+      uses: jdx/mise-action@1648a7812b9aeae629881980618f079932869151 # v4.0.1
       with:
         version: 2026.4.0
 
@@ -52,7 +55,7 @@ runs:
     # so the Tailscale Terraform provider can authenticate without a long-lived secret.
     - name: Get Tailscale identity token
       if: inputs.ts-oauth-client-id != ''
-      uses: actions/github-script@v9.0.0
+      uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
       with:
         script: |
           const token = await core.getIDToken('${{ inputs.ts-audience }}')
@@ -62,7 +65,7 @@ runs:
 
     - name: Connect to Tailscale
       if: inputs.ts-oauth-client-id != ''
-      uses: tailscale/github-action@v4.1.2
+      uses: tailscale/github-action@306e68a486fd2350f2bfc3b19fcd143891a4a2d8 # v4.1.2
       with:
         oauth-client-id: ${{ inputs.ts-oauth-client-id }}
         audience: ${{ inputs.ts-audience }}
@@ -79,3 +82,12 @@ runs:
       if: inputs.ts-oauth-client-id != ''
       shell: bash
       run: sudo tailscale set --operator=$USER
+
+    # FEATURE_ is reserved for feature toggles (live/bootstrap/feature_toggles).
+    - name: Export feature toggles
+      shell: bash
+      env:
+        VARS: ${{ inputs.vars-json }}
+      run: |
+        jq -r 'to_entries[] | select((.key | test("^FEATURE_[A-Z0-9_]+_ENABLED$")) and .value == "true") | "\(.key)=true"' \
+          <<< "$VARS" >> "$GITHUB_ENV"
