@@ -21,7 +21,7 @@ permissions:
 
 env:
   # Timeout for testing infrastructure
-  TERRATEST_TIMEOUT: 90m
+  TERRATEST_TIMEOUT: 110m
 
 jobs:
   check-if-pr-is-draft:
@@ -47,7 +47,7 @@ jobs:
         with:
           deploy-keys: |
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_PLAN_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           vars-json: ${{ toJSON(vars) }}
 
@@ -77,7 +77,7 @@ jobs:
         with:
           deploy-keys: |
             ${{ secrets.DEPLOY_KEY_TG_CATALOG }}
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_PLAN_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
           vars-json: ${{ toJSON(vars) }}
           ts-oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
@@ -124,7 +124,7 @@ jobs:
         run: |
           cd live/${{ matrix.env }}
           terragrunt stack generate
-          terragrunt run --all init --no-stack-generate --backend-bootstrap --non-interactive
+          terragrunt run --all init --no-stack-generate --non-interactive
           terragrunt run --all validate --no-stack-generate
           terragrunt run --all plan --no-stack-generate > ${{ matrix.env }}-plan-output.txt
           cat ${{ matrix.env }}-plan-output.txt | aha --black > prod-plan-output.html

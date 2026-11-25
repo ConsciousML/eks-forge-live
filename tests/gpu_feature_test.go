@@ -3,6 +3,7 @@ package tests
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"maps"
 	"os"
 	"os/exec"
@@ -26,6 +27,13 @@ const (
 	gpuTaintKey      = "karpenter.sh/workload-class"
 	gpuTaintValue    = "gpu"
 	gpuNodeLabel     = "karpenter.k8s.aws/instance-gpu-manufacturer"
+
+	// Suspended CronJob from the app of apps' manifests/features/gpu/smoke-test.
+	gpuSmokeTestCronJob = "gpu-smoke-test"
+	gpuSmokeTestPassed  = "Test PASSED"
+	// The Job's activeDeadlineSeconds (15m) plus pod startup and log slack.
+	gpuSmokeTestTimeout = 17 * time.Minute
+	gpuSmokeTestPoll    = 10 * time.Second
 )
 
 var (
@@ -37,9 +45,9 @@ var (
 	}
 )
 
-// assertGPUFeature checks the gpu feature deployed without running a GPU workload: its
-// Applications are Synced and Healthy, its NodePools and EC2NodeClass are Ready, and its
-// DaemonSets tolerate the gpu taint and select NVIDIA nodes. Skipped unless
+// assertGPUFeature checks the gpu feature: its Applications are Synced and Healthy, its NodePools
+// and EC2NodeClass are Ready, its DaemonSets tolerate the gpu taint and select NVIDIA nodes, and
+// the GPU smoke test passes. Skipped unless
 // FEATURE_GPU_ENABLED is "true", which CI and CD export from the feature_toggles bootstrap's
 // GitHub variables.
 func assertGPUFeature(t *testing.T) {
@@ -111,6 +119,52 @@ func assertGPUFeature(t *testing.T) {
 		}
 		assert.True(t, found, "[ERROR] no daemonset matching %s in namespace %s", fragment, gpuNamespace)
 	}
+
+	assertGPUSmokeTest(t)
+}
+
+// assertGPUSmokeTest triggers one run of the gpu-smoke-test CronJob and fails unless its Job
+// completes and logs "Test PASSED" within gpuSmokeTestTimeout. The Job's TTL deletes it.
+func assertGPUSmokeTest(t *testing.T) {
+	t.Helper()
+
+	name := fmt.Sprintf("%s-terratest-%d", gpuSmokeTestCronJob, time.Now().Unix())
+	kubectl(t, "create", "job", "--from=cronjob/"+gpuSmokeTestCronJob, name, "-n", gpuNamespace)
+	t.Logf("[INFO] started GPU smoke test job %s", name)
+
+	var job struct {
+		Status struct {
+			Conditions []struct {
+				Type    string `json:"type"`
+				Status  string `json:"status"`
+				Reason  string `json:"reason"`
+				Message string `json:"message"`
+			} `json:"conditions"`
+		} `json:"status"`
+	}
+	for deadline := time.Now().Add(gpuSmokeTestTimeout); ; {
+		require.NoError(t, json.Unmarshal(kubectlJSON(t, "get", "job", name, "-n", gpuNamespace), &job))
+		for _, c := range job.Status.Conditions {
+			if c.Status != "True" {
+				continue
+			}
+			switch c.Type {
+			case "Complete":
+				logs := kubectl(t, "logs", "job/"+name, "-n", gpuNamespace)
+				assert.Contains(t, logs, gpuSmokeTestPassed, "[ERROR] GPU smoke test job %s logs", name)
+				t.Logf("[INFO] GPU smoke test job %s passed", name)
+				return
+			case "Failed":
+				t.Errorf("[ERROR] GPU smoke test job %s failed: %s %s", name, c.Reason, c.Message)
+				return
+			}
+		}
+		if time.Now().After(deadline) {
+			t.Errorf("[ERROR] GPU smoke test job %s didn't finish within %s", name, gpuSmokeTestTimeout)
+			return
+		}
+		time.Sleep(gpuSmokeTestPoll)
+	}
 }
 
 // assertReady checks the cluster-scoped kind/name has a Ready condition set to True.
@@ -140,10 +194,17 @@ func assertReady(t *testing.T, kind string, name string) {
 func kubectlJSON(t *testing.T, args ...string) []byte {
 	t.Helper()
 
+	return []byte(kubectl(t, append(args, "-o", "json")...))
+}
+
+// kubectl runs kubectl with args and returns its stdout, failing the test on error.
+func kubectl(t *testing.T, args ...string) string {
+	t.Helper()
+
 	ctx, cancel := context.WithTimeout(context.Background(), kubectlTimeout)
 	defer cancel()
 
-	out, err := exec.CommandContext(ctx, "kubectl", append(args, "-o", "json")...).Output()
+	out, err := exec.CommandContext(ctx, "kubectl", args...).Output()
 	require.NoError(t, err, "[ERROR] kubectl %s failed", strings.Join(args, " "))
-	return out
+	return string(out)
 }

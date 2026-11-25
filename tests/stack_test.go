@@ -71,8 +71,8 @@ func TestProdStack(t *testing.T) {
 //
 // Usage:
 //
-//	go test -v -run TestStackExists -timeout 10m
-//	TERRATEST_TARGET_ENVIRONMENT=prod go test -v -run TestStackExists -timeout 10m
+//	go test -v -run TestStackExists -timeout 30m
+//	TERRATEST_TARGET_ENVIRONMENT=prod go test -v -run TestStackExists -timeout 30m
 func TestStackExists(t *testing.T) {
 	if os.Getenv("GITHUB_ACTIONS") == "true" {
 		t.Skip("skipped in CI — run locally against an already-deployed stack")

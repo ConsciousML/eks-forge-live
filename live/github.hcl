@@ -6,6 +6,9 @@ locals {
   github_repo_name_live        = "eks-forge-live"
   github_repo_name_app_of_apps = "eks-forge-app-of-apps"
 
+  # Read-only CI plan role from the aws_gh_actions_auth bootstrap, granted EKS view in the stacks.
+  plan_role_name = "gh-tg-live-eks-plan-role"
+
   # true makes ArgoCD read the app of apps over SSH with the app_of_apps_deploy_key bootstrap's read-only key.
   app_of_apps_private = false
   # One key per app of apps fork, shared by every environment. No {environment}- prefix.

@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.3.0"
+  version_catalog     = "v0.4.0"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # STAGING: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.4.0"
+  app_of_apps_target_revision = "v0.5.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -34,6 +34,11 @@ locals {
   # IAM principal that needs local destroy access when CI deployed the cluster.
   # Get your ARN: aws sts get-caller-identity --query Arn --output text
   local_admin_arn = get_env("EKS_LOCAL_ADMIN_ARN", "")
+
+  # STAGING: dev has no equivalent. CI plan role from the aws_gh_actions_auth bootstrap, prefixed with
+  # its environment.
+  bootstrap_environment = read_terragrunt_config(find_in_parent_folders("bootstrap/environment.hcl")).locals.environment
+  plan_role_arn         = "arn:aws:iam::${get_aws_account_id()}:role/${local.bootstrap_environment}-${local.github_locals.plan_role_name}"
 
   # Shared by every Karpenter NodePool. Only capacity-type differs per pool.
   karpenter_node_pool_base_requirements = [
@@ -339,11 +344,24 @@ unit "cluster" {
       enabled = false
     }
 
-    # STAGING: dev always sets access_entries = {}, staging conditionally grants a local admin
-    # entry (staging is also CI-deployed, for Terratest integration testing).
+    # STAGING: dev always sets access_entries = {}, staging grants the CI plan role view access and
+    # conditionally a local admin entry (staging is also CI-deployed, for Terratest integration testing).
     # Only needed when CI deployed the cluster and you need to run destroy locally.
     # Get your ARN with: aws sts get-caller-identity --query Arn --output text
-    access_entries = local.local_admin_arn != "" ? {
+    access_entries = merge({
+      # Helm and Kubernetes providers refresh the cluster during plan.
+      plan_role = {
+        principal_arn = local.plan_role_arn
+        policy_associations = {
+          view = {
+            policy_arn = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSAdminViewPolicy"
+            access_scope = {
+              type = "cluster"
+            }
+          }
+        }
+      }
+      }, local.local_admin_arn != "" ? {
       local_admin = {
         principal_arn = local.local_admin_arn
         policy_associations = {
@@ -355,7 +373,7 @@ unit "cluster" {
           }
         }
       }
-    } : {}
+    } : {})
   }
 }
 
@@ -478,6 +496,16 @@ unit "loki_s3_ruler" {
 unit "iam_role_loki" {
   source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/loki/iam_role?ref=${local.version_catalog}"
   path   = "eks/addons/loki/iam_role"
+
+  values = {
+    version = local.version_catalog
+    tags    = {}
+  }
+}
+
+unit "iam_role_yace" {
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//units/eks/addons/yace/iam_role?ref=${local.version_catalog}"
+  path   = "eks/addons/yace/iam_role"
 
   values = {
     version = local.version_catalog
