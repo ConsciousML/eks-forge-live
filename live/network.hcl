@@ -7,7 +7,8 @@ locals {
   }
 
   # Offset within each private subnet CIDR for each interface endpoint's pinned ENI IP.
-  # Every entry needs a CiliumNetworkPolicy consumer in app_param_key_map below. Unused offsets are spare.
+  # Every entry needs a critical-pod consumer in app_param_key_map below. Unused offsets are spare.
+  # A pod is critical if its IAM role can read secrets, change DNS, launch compute, pass IAM roles, or change network exposure.
   endpoint_host_offsets = {
     secretsmanager       = 10
     route53              = 11
