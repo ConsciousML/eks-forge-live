@@ -1,5 +1,5 @@
 locals {
-  version = "v0.3.0"
+  version = "v0.4.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
@@ -112,6 +112,29 @@ stack "aws_gh_actions_role" {
         })
       }
     ]
+  }
+}
+
+stack "aws_gh_actions_plan_role" {
+  source = "git::git@github.com:${local.github_owner_catalog}/${local.github_repo_name_catalog}.git//stacks/aws_gh_actions_role?ref=${local.version}"
+  path   = "github_actions_plan_role"
+  values = {
+    version                  = local.version
+    github_owner_catalog     = local.github_owner_catalog
+    github_repo_name_catalog = local.github_repo_name_catalog
+    github_owner             = local.github_owner_live
+    github_repo_name         = local.github_repo_name_live
+    subject_claim_prefix     = local.subject_claim_prefix
+    github_branch            = "*"
+    github_token             = local.github_token
+    iam_role_name            = local.github_locals.plan_role_name
+    role_arn_secret_name     = "AWS_PLAN_ROLE_ARN"
+    # Matches the setup action's role-duration-seconds.
+    max_session_duration = 9000
+    # CI plan jobs only.
+    read_only = true
+    # Each entry matches secret:<entry>-*, so staging and prod cover the secrets the units create.
+    plan_secret_names = ["staging", "prod", local.github_locals.app_of_apps_deploy_key_secret_name]
   }
 }
 

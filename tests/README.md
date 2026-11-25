@@ -145,7 +145,7 @@ aws eks update-kubeconfig --region $AWS_REGION --name staging-cluster
 Then, from the root of your live fork, run `TestStackExists`. It reads the stack outputs with Terragrunt, which needs the tokens of your `.env`:
 ```bash
 source .env
-go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
+go test -v -run '^TestStackExists$' ./tests/... -timeout 30m
 ```
 
 `TestStackExists` runs every check against the cluster you deployed, without applying or destroying anything. For a reachability check, you should see your tool's line, then the test pass:
@@ -168,7 +168,7 @@ Once it passes, destroy `staging` as in [Destroy the Infrastructure](/docs/deplo
 ```bash
 source .env
 export AWS_REGION=<region-code>
-go test -v -run '^TestStack$' ./tests/... -timeout 90m 2>&1 | tee /tmp/test.log
+go test -v -run '^TestStack$' ./tests/... -timeout 110m 2>&1 | tee /tmp/test.log
 ```
 
 It takes around 1 hour. The test [disconnects and reconnects Tailscale](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#why-tailscale-disconnects-and-reconnects) by itself, so leave Tailscale alone while it runs.

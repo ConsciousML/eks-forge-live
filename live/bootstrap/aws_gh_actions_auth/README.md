@@ -2,6 +2,8 @@
 ### AWS GitHub Actions Authentication
 This pipeline lets your live fork's CI/CD authenticate with AWS. It reuses the OIDC provider created from your catalog fork.
 
+It creates two roles. Terratest and the `prod` apply assume the `AdministratorAccess` role in the `AWS_ROLE_ARN` secret. The plan jobs assume the read-only plan role in the `AWS_PLAN_ROLE_ARN` secret, which the `staging` and `prod` clusters grant `AmazonEKSAdminViewPolicy`.
+
 From the root of your live fork, run:
 ```bash
 source .env

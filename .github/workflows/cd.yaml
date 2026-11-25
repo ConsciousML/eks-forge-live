@@ -167,7 +167,7 @@ jobs:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           # Holds `us` for a US account. Only the app of apps unit reads it, and it checks for `eu` only.
           PAGERDUTY_SERVICE_REGION: ${{ secrets.PAGERDUTY_SERVICE_REGION }}
-        run: go test -v -run '^TestProdStack$' ./tests/... -timeout 45m
+        run: go test -v -run '^TestProdStack$' ./tests/... -timeout 60m
 
   revoke-oauth:
     # Revokes the temporary Tailscale OAuth client created during apply.

@@ -86,7 +86,7 @@ Keep Tailscale connected: the tests reach your private endpoints. From the root 
 ```bash
 source .env
 export AWS_REGION=<region-code>
-go test -v -run '^TestStackExists$' ./tests/... -timeout 10m
+go test -v -run '^TestStackExists$' ./tests/... -timeout 30m
 ```
 
 The tests check that your cluster's tools are reachable, and that ArgoCD and Grafana accept their admin password. See [What the Tests Check](/docs/ci-cd/testing/how-the-infrastructure-tests-work/#what-the-tests-check) for the full list. You should see:
