@@ -1,5 +1,5 @@
 locals {
-  version = "v0.4.0"
+  version = "v0.5.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
