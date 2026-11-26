@@ -1,5 +1,5 @@
 locals {
-  version_catalog     = "v0.4.0"
+  version_catalog     = "v0.5.0"
   version_vpc         = "6.6.0"
   version_cluster     = "21.15.1"
   version_aws_lbc     = "3.2.1"
@@ -14,7 +14,7 @@ locals {
 
   # STAGING: pinned to a release tag instead of dev's "refs/heads/main", so app-of-apps tracks a
   # fixed catalog version instead of the latest commit on main.
-  app_of_apps_target_revision = "v0.5.0"
+  app_of_apps_target_revision = "v0.6.0"
 
   github_locals            = read_terragrunt_config(find_in_parent_folders("github.hcl")).locals
   github_owner_catalog     = local.github_locals.github_owner_catalog
