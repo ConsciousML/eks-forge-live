@@ -49,7 +49,7 @@ arn:aws:eks:<region-code>:<account-id>:cluster/staging-cluster
 
 The tests you'll run later use this context.
 
-ArgoCD then deploys the Kubernetes resources. Monitor the progress by running:
+The apply returns only once ArgoCD has deployed the Kubernetes resources. Check them by running:
 ```bash
 kubectl get app -n argocd
 ```

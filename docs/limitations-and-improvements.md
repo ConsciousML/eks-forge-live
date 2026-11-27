@@ -29,7 +29,7 @@ The main gap is that `staging` only ever tests a fresh create. `prod` doesn't ge
 
 Since `staging` is destroyed right after the tests, there is also no room for soak tests. Anything that needs to run for hours or days has no environment to run against before `prod`.
 
-It's also slow. Each run builds a full EKS cluster before testing it, with a 90 minute timeout, and since runs are queued, a PR can wait behind others before its own run starts.
+It's also slow. Each run builds a full EKS cluster before testing it, with a 110 minute timeout, and since runs are queued, a PR can wait behind others before its own run starts.
 
 Finally, the plan reviewed on the PR isn't always the one applied to `prod`. CD plans again when the PR merges, and the live repository doesn't require PR branches to be up to date with `main` before merging. If another PR merged after yours was reviewed, `prod` applies a diff nobody reviewed.
 
