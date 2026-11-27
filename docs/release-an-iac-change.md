@@ -14,7 +14,16 @@ git fetch --tags
 git tag --sort=-v:refname | head -1
 ```
 
-Tag `main` with the next minor version after it and push the tag, replacing `<new-tag>` (e.g. `v0.2.0` after `v0.1.9`):
+List the commits merged since that tag, replacing `<old-tag>` with it:
+```bash
+git log --oneline <old-tag>..main
+```
+
+Pick the next version from those commits, following [semantic versioning](https://semver.org/):
+- **Minor** (e.g. `v0.5.0` after `v0.4.0`): at least one `feat:` commit.
+- **Patch** (e.g. `v0.4.1` after `v0.4.0`): no `feat:` commit.
+
+Tag `main` with it and push the tag, replacing `<new-tag>` with the new version:
 ```bash
 git tag <new-tag>
 git push origin <new-tag>
