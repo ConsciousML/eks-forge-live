@@ -26,7 +26,7 @@ git checkout -b <branch>
 ## Update the Live Fork
 
 :::warning
-If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, follow both [Release an IaC Change](/docs/iac/release-an-iac-change/) and [Release an App Change](/docs/applications/release-an-app-change/) in this pull request. `apps/values.schema.json` rejects any `appParams` key it doesn't list, so releasing one fork without the other breaks the ArgoCD sync.
+If your change added or removed an [`appParams`](/docs/applications/how-the-app-of-apps-works/#appparams-injection) key, follow both [Release an IaC Change](/docs/iac/release-an-iac-change/) and [Release an App Change](/docs/applications/release-an-app-change/) in this pull request. `apps/core/values.schema.json` rejects any `appParams` key it doesn't list, so releasing one fork without the other breaks the ArgoCD sync.
 :::
 
 On this branch, follow every guide that fits your change. They all go into the same pull request:
