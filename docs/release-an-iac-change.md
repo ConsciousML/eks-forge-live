@@ -56,7 +56,7 @@ The sections below walk through this diff, one group of files at a time.
 If the catalog changed a tool version in `mise.toml`, set the same version in your live `mise.toml`, so CI and your local runs use the tools the catalog was tested with. For example:
 ```toml
 [tools]
-terragrunt = "1.1.3" # match the catalog's version
+terragrunt = "1.2.2" # match the catalog's version
 ```
 
 Then install the new versions locally:
